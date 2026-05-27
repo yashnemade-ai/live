@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EliteTV | Red Premium</title>
+    <title>EliteTV | Pro Edition</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -21,129 +21,134 @@
         }
 
         body.light-mode {
-            --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a;
-            --text-sec: #64748b; --border: rgba(0, 0, 0, 0.06); --glass: rgba(0, 0, 0, 0.02);
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-sec: #64748b;
+            --border: rgba(0, 0, 0, 0.1);
+            --glass: rgba(0, 0, 0, 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; transition: 0.3s; }
+        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; transition: 0.3s ease; }
 
-        /* --- Header with Logo --- */
+        /* --- Header --- */
         header {
-            position: sticky; top: 0; z-index: 1000; background: rgba(5, 5, 7, 0.8);
-            backdrop-filter: blur(25px); padding: 1rem 5%; display: flex;
+            position: sticky; top: 0; z-index: 1000; background: var(--bg);
+            backdrop-filter: blur(20px); padding: 1rem 5%; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
         }
-        .brand { 
-            font-size: 1.6rem; font-weight: 900; cursor: pointer; 
-            display: flex; align-items: center; gap: 10px;
-        }
-        .brand i { color: #fff; } /* Logo Color */
+        .brand { font-size: 1.6rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .brand i { color: #fff; }
         .brand span { background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .search-container { flex: 0 1 400px; background: var(--glass); border: 1px solid var(--border); padding: 8px 16px; border-radius: 14px; display: flex; align-items: center; gap: 10px; }
         .search-container input { background: transparent; border: none; color: var(--text-main); outline: none; width: 100%; font-size: 0.9rem; }
 
-        /* --- Category (Red Active) --- */
+        .header-btns { display: flex; align-items: center; gap: 15px; }
+        .theme-btn { cursor: pointer; background: var(--glass); border: 1px solid var(--border); color: var(--text-main); padding: 8px; border-radius: 50%; display: flex; align-items: center; }
+
+        /* --- Category Pills --- */
         .cat-nav { position: sticky; top: 72px; z-index: 900; background: var(--bg); padding: 15px 0; border-bottom: 1px solid var(--border); }
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 0 5%; scrollbar-width: none; }
         .chip { padding: 10px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; font-weight: 700; color: var(--text-sec); transition: 0.3s; }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- Cards with Live Animation --- */
-        .grid { display: grid; padding: 2rem 5% 100px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; }
-        .card { background: var(--surface); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: 0.4s; position: relative; }
+        /* --- Main Grid --- */
+        .grid { display: grid; padding: 1rem 5% 100px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        .card { background: var(--surface); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: 0.4s; position: relative; }
         .card:hover { transform: translateY(-8px); border-color: var(--primary); }
         .card .poster-box { width: 100%; aspect-ratio: 1/1; background: #000; padding: 25px; display: flex; align-items: center; justify-content: center; }
         .card img { max-width: 90%; max-height: 90%; object-fit: contain; }
         
-        .live-tag {
-            position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px); padding: 4px 8px; border-radius: 6px;
-            display: flex; align-items: center; gap: 5px; font-size: 0.6rem; font-weight: 800; color: white;
-        }
+        .live-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; gap: 5px; font-size: 0.6rem; font-weight: 800; color: #fff; }
         .dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1.2s infinite; }
-        @keyframes blink { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes blink { 50% { opacity: 0.3; } }
 
-        .card-info { padding: 15px; text-align: center; }
-        .card-info h3 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info { padding: 12px; text-align: center; background: rgba(255,255,255,0.02); }
+        .card-info h3 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
 
-        /* --- PLAYER OVERLAY --- */
-        #player-overlay { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; }
-        .video-container { position: relative; width: 100%; height: 100%; background: #000; overflow: hidden; }
-        video { width: 100%; height: 100%; object-fit: contain; }
+        /* --- PRO PLAYER OVERLAY --- */
+        #player-overlay { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; overflow-y: auto; }
+        .video-container { position: sticky; top: 0; width: 100%; aspect-ratio: 16/9; background: #000; z-index: 100; cursor: default; }
+        video { width: 100%; height: 100%; }
 
-        .controls-wrapper {
-            position: absolute; inset: 0; z-index: 10;
-            display: flex; flex-direction: column; justify-content: space-between;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.7) 100%);
-            opacity: 0; transition: opacity 0.4s ease;
+        /* Auto-hide controls wrapper */
+        .controls-wrapper { 
+            position: absolute; inset: 0; display: flex; flex-direction: column; 
+            justify-content: space-between; transition: opacity 0.5s ease; opacity: 0; 
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.7) 100%);
+            z-index: 10;
         }
         .video-container.show-controls .controls-wrapper { opacity: 1; }
 
-        .p-header { padding: 30px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
-        .p-header-left { display: flex; align-items: center; gap: 15px; }
-        .p-back { width: 45px; height: 45px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .p-pipe { width: 4px; height: 30px; background: var(--primary); border-radius: 2px; }
-        .p-name { font-size: 1.4rem; font-weight: 800; color: white; letter-spacing: -0.5px; }
+        /* Player Header (MATCHING IMAGE) */
+        .p-header { padding: 30px; display: flex; align-items: center; gap: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+        .p-back-circle { 
+            width: 45px; height: 45px; border-radius: 50%; background: rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; 
+            justify-content: center; cursor: pointer; transition: 0.3s;
+        }
+        .p-back-circle:hover { background: var(--primary); }
+        .p-red-pipe { width: 4px; height: 32px; background: var(--primary); border-radius: 2px; }
+        .p-name { font-weight: 800; font-size: 1.5rem; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
-        .p-bottom { padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
-        .progress-area { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; cursor: pointer; margin-bottom: 20px; }
-        
-        /* PLAIN RED PROGRESS BAR (GLOW REMOVED) */
+        .p-bottom { padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
+        .progress-area { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px; cursor: pointer; }
         .progress-bar { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; }
         
-        .settings-menu { position: absolute; bottom: 100px; right: 30px; background: rgba(20,20,25,0.95); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: none; min-width: 180px; }
-        .s-item { padding: 12px; cursor: pointer; border-radius: 8px; font-size: 0.9rem; font-weight: 700; color: white; transition: 0.2s; }
-        .s-item:hover { background: var(--primary); }
+        .p-controls-row { display: flex; justify-content: space-between; align-items: center; color: #fff; }
+        .p-group { display: flex; align-items: center; gap: 20px; }
+        .p-icon { cursor: pointer; transition: 0.2s; }
+        .p-icon:hover { color: var(--primary); transform: scale(1.1); }
+        .timer { font-size: 0.9rem; font-weight: 600; }
 
-        #video-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Quality Dropdown */
+        .quality-menu { position: absolute; bottom: 100px; right: 30px; background: #111; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: none; min-width: 160px; z-index: 200; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .q-item { padding: 14px 20px; font-size: 0.9rem; font-weight: 700; cursor: pointer; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .q-item:hover { background: rgba(255,255,255,0.05); }
+        .q-item.active { background: var(--primary); color: white; }
 
-        /* --- PROFESSIONAL MODAL & UPLOAD --- */
-        #importModal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 32px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-        .modal-card h2 { font-weight: 800; margin-bottom: 20px; font-size: 1.5rem; }
-        
-        .input-group { position: relative; margin-bottom: 20px; }
-        .input-group input { width: 100%; padding: 16px; border-radius: 16px; background: #000; border: 1px solid var(--border); color: white; outline: none; font-size: 0.9rem; transition: 0.3s; }
-        .input-group input:focus { border-color: var(--primary); }
+        /* Suggestion Section */
+        .suggestion-section { padding: 30px 5%; background: var(--bg); }
+        .suggestion-section h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        /* PROFESSIONAL UPLOAD BOX */
-        .upload-area {
-            border: 2px dashed var(--border); background: rgba(255,255,255,0.02);
-            padding: 30px 20px; border-radius: 20px; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            margin-bottom: 25px; transition: 0.3s;
-        }
-        .upload-area:hover { background: rgba(255,255,255,0.05); border-color: var(--primary); }
-        .upload-area i { color: var(--text-sec); transition: 0.3s; }
-        .upload-area:hover i { color: var(--primary); transform: translateY(-5px); }
-        .upload-area p { font-size: 0.85rem; color: var(--text-sec); font-weight: 600; }
-        .upload-area span { font-size: 0.7rem; color: #555; }
+        /* --- Modals --- */
+        #importModal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
+        .modal-card { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 400px; padding: 2.5rem; border-radius: 32px; text-align: center; }
+        .upload-zone { border: 2px dashed var(--border); padding: 40px 20px; border-radius: 20px; margin: 20px 0; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .upload-zone:hover { border-color: var(--primary); background: rgba(249,13,0,0.05); }
 
-        .btn-main { width: 100%; padding: 16px; border-radius: 16px; background: var(--primary); color: white; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem; }
-        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(249, 13, 0, 0.3); }
-
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(5,5,7,0.8); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        /* --- Bottom Nav --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: var(--bg); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); cursor: pointer; font-size: 0.7rem; font-weight: 800; gap: 5px; }
         .nav-item.active { color: var(--primary); }
+
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .search-container { flex: 0 0 45px; padding: 10px; justify-content: center; }
+            .search-container input { display: none; }
+            .brand span { font-size: 1.3rem; }
+        }
     </style>
 </head>
 <body id="body-main">
 
     <header>
-        <div class="brand" onclick="location.reload()">
+        <div class="brand" onclick="loadBaseM3U()">
             <i data-lucide="tv"></i>
             <span>EliteTV</span>
         </div>
         <div class="search-container">
-            <i data-lucide="search" size="18" color="#666"></i>
+            <i data-lucide="search" size="20"></i>
             <input type="text" id="search" placeholder="Search channels..." oninput="handleSearch()">
         </div>
-        <div class="nav-btns">
-            <button class="icon-btn" onclick="toggleTheme()" style="background:none; border:none; color:white; cursor:pointer;"><i data-lucide="moon"></i></button>
+        <div class="header-btns">
+            <div class="theme-btn" onclick="toggleTheme()">
+                <i data-lucide="moon" id="theme-icon"></i>
+            </div>
         </div>
     </header>
 
@@ -151,102 +156,117 @@
         <div id="categories" class="categories"></div>
     </div>
 
-    <div id="channel-grid" class="grid"></div>
+    <div id="channel-grid" class="grid">
+        <div style="grid-column: 1/-1; text-align: center; padding: 100px;">
+            <div class="spinner" style="margin: 0 auto;"></div>
+            <p style="margin-top: 20px; color: var(--text-sec);">Initializing Elite Network...</p>
+        </div>
+    </div>
 
-    <!-- PRO PLAYER -->
+    <!-- PRO PLAYER OVERLAY -->
     <div id="player-overlay">
         <div class="video-container" id="video-wrapper">
-            <div id="video-loader"><div class="spinner"></div></div>
+            <div id="video-loader" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#000; z-index:10;"><div class="spinner"></div></div>
             <video id="video" playsinline></video>
             
             <div class="controls-wrapper">
+                <!-- Top Header (From Image Request) -->
                 <div class="p-header">
-                    <div class="p-header-left">
-                        <div class="p-back" onclick="closePlayer()"><i data-lucide="arrow-left" color="white"></i></div>
-                        <div class="p-pipe"></div>
-                        <div class="p-name" id="p-name-txt">Channel</div>
+                    <div class="p-back-circle" onclick="closePlayer()">
+                        <i data-lucide="arrow-left" color="white" size="24"></i>
                     </div>
-                    <div class="p-back" onclick="closePlayer()" style="background: rgba(255,255,255,0.1);"><i data-lucide="x" color="white"></i></div>
+                    <div class="p-red-pipe"></div>
+                    <div class="p-name" id="p-name-txt">Channel Name</div>
                 </div>
 
+                <!-- Bottom Controls -->
                 <div class="p-bottom">
                     <div class="progress-area" id="p-container">
                         <div class="progress-bar" id="p-bar"></div>
                     </div>
-                    <div style="display: flex; justify-content: space-between; color: white; align-items: center;">
-                        <div style="display: flex; gap: 20px;">
-                            <i data-lucide="play" class="p-icon" id="play-btn" onclick="togglePlay()"></i>
-                            <i data-lucide="volume-2" class="p-icon" id="mute-btn" onclick="toggleMute()"></i>
+                    <div class="p-controls-row">
+                        <div class="p-group">
+                            <i data-lucide="play" id="play-btn" class="p-icon" onclick="togglePlay()"></i>
+                            <i data-lucide="volume-2" id="mute-btn" class="p-icon" onclick="toggleMute()"></i>
+                            <span class="timer" id="time-display">00:00 / 00:00</span>
                         </div>
-                        <div style="display: flex; gap: 20px;">
+                        <div class="p-group">
                             <i data-lucide="settings" class="p-icon" onclick="toggleSettings()"></i>
                             <i data-lucide="maximize" class="p-icon" onclick="toggleFullScreen()"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="settings-menu" id="settings-menu">
-                    <p style="font-size: 0.7rem; color: #888; margin-bottom: 10px; font-weight: 800;">QUALITY</p>
-                    <div id="quality-list"></div>
-                </div>
+                <div class="quality-menu" id="quality-menu"></div>
             </div>
+        </div>
+
+        <div class="suggestion-section">
+            <h2 id="suggestion-title"><i data-lucide="sparkles" color="var(--primary)"></i> Similar Channels</h2>
+            <div id="suggestion-grid" class="grid" style="padding: 0;"></div>
         </div>
     </div>
 
+    <!-- Bottom Nav -->
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="location.reload()"><i data-lucide="home"></i><span>HOME</span></div>
+        <div class="nav-item active" onclick="loadBaseM3U()"><i data-lucide="home"></i><span>HOME</span></div>
         <div class="nav-item" onclick="toggleModal(true)"><i data-lucide="plus-circle"></i><span>IMPORT</span></div>
     </div>
 
-    <!-- Professional Import Modal -->
+    <!-- Import Modal -->
     <div id="importModal">
         <div class="modal-card">
-            <h2>Add Playlist</h2>
+            <h2 style="font-weight: 800;">Import Playlist</h2>
+            <input type="text" id="m3uUrl" placeholder="Paste M3U Link..." style="width:100%; padding:15px; border-radius:12px; background:var(--bg); border:1px solid var(--border); color:var(--text-main); margin:15px 0; outline:none;">
             
-            <div class="input-group">
-                <input type="text" id="m3uUrl" placeholder="Enter M3U URL here...">
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                <i data-lucide="file-up" size="32"></i>
+                <p style="font-size: 0.9rem; font-weight: 700;">Upload .m3u File</p>
+                <span style="font-size: 0.7rem; color: var(--text-sec);">Browse local files</span>
             </div>
-
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                <i data-lucide="upload-cloud" size="32"></i>
-                <p>Choose local .m3u file</p>
-                <span>Supported: .m3u, .m3u8</span>
-            </div>
-            
             <input type="file" id="fileInput" style="display:none" accept=".m3u" onchange="loadFile(event)">
             
-            <button class="btn-main" onclick="loadUrl()">SYNC CONTENT</button>
-            <button onclick="toggleModal(false)" style="margin-top:20px; background:none; border:none; color:var(--text-sec); cursor:pointer; font-weight:700;">Close Modal</button>
+            <button onclick="loadUrl()" style="width:100%; padding:16px; border-radius:16px; background:var(--primary); color:white; border:none; font-weight:800; cursor:pointer;">LOAD NETWORK</button>
+            <button onclick="toggleModal(false)" style="margin-top:15px; background:none; border:none; color:var(--text-sec); cursor:pointer;">Close</button>
         </div>
     </div>
 
     <script>
         const PROXY = 'https://yashiptvplaylist.bgmihackerr12.workers.dev/?url='; 
-        const M3U = 'https://yashlivetv.fun/app/tsjio_playlist.m3u';
-        let hls = null, allChannels = [];
+        const BASE_M3U = 'https://yashlivetv.fun/app/tsjio_playlist.m3u';
+        let hls = null, allChannels = [], currentGroup = "";
         const video = document.getElementById('video');
         const wrapper = document.getElementById('video-wrapper');
 
         lucide.createIcons();
 
-        // Auto Hide Controls
-        let timer;
+        // Auto-Hide Controls Logic
+        let controlTimer;
         function showControls() {
             wrapper.classList.add('show-controls');
-            clearTimeout(timer);
-            timer = setTimeout(() => { if(!video.paused) wrapper.classList.remove('show-controls'); }, 3000);
+            clearTimeout(controlTimer);
+            controlTimer = setTimeout(() => {
+                if (!video.paused) wrapper.classList.remove('show-controls');
+            }, 3000);
         }
         wrapper.addEventListener('mousemove', showControls);
         wrapper.addEventListener('touchstart', showControls);
 
-        window.onload = () => fetchPlaylist(M3U);
+        window.onload = () => fetchPlaylist(BASE_M3U);
+
+        function loadBaseM3U() {
+            closePlayer();
+            fetchPlaylist(BASE_M3U);
+        }
 
         async function fetchPlaylist(url) {
             try {
-                const res = await fetch(PROXY + encodeURIComponent(url));
-                const data = await res.text();
+                const response = await fetch(PROXY + encodeURIComponent(url));
+                const data = await response.text();
                 parseM3U(data);
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error("Network Error", e);
+            }
         }
 
         function parseM3U(content) {
@@ -261,18 +281,18 @@
                         group: line.match(/group-title="([^"]+)"/)?.[1] || 'General'
                     };
                 } else if (line.startsWith('http')) {
-                    if(current) { current.url = line; channels.push(current); current = null; }
+                    if (current) { current.url = line; channels.push(current); current = null; }
                 }
             });
             allChannels = channels;
             renderCategories();
-            renderGrid(allChannels);
+            renderGrid(allChannels, 'channel-grid');
         }
 
-        function renderGrid(list) {
-            const grid = document.getElementById('channel-grid');
-            grid.innerHTML = list.slice(0, 400).map(ch => `
-                <div class="card" onclick="playStream('${ch.url}', '${ch.name.replace(/'/g, "\\'")}')">
+        function renderGrid(list, target, isMini = false) {
+            const grid = document.getElementById(target);
+            grid.innerHTML = list.slice(0, isMini ? 12 : 300).map(ch => `
+                <div class="card" onclick="playStream('${ch.url}', '${ch.name.replace(/'/g, "\\'")}', '${ch.group}')">
                     <div class="live-tag"><div class="dot"></div> LIVE</div>
                     <div class="poster-box"><img src="${ch.logo}" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'"></div>
                     <div class="card-info"><h3>${ch.name}</h3></div>
@@ -290,13 +310,14 @@
         function filterCat(el, cat) {
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
-            renderGrid(cat === 'All' ? allChannels : allChannels.filter(c => c.group === cat));
+            renderGrid(cat === 'All' ? allChannels : allChannels.filter(c => c.group === cat), 'channel-grid');
         }
 
-        function playStream(url, name) {
+        function playStream(url, name, group) {
             document.getElementById('p-name-txt').innerText = name;
             document.getElementById('player-overlay').style.display = 'flex';
             document.getElementById('video-loader').style.display = 'flex';
+            currentGroup = group;
 
             if (hls) hls.destroy();
             if (Hls.isSupported()) {
@@ -304,48 +325,60 @@
                 hls.loadSource(url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play(); setupQuality(); });
-            } else {
-                video.src = url;
-                video.play();
-            }
+            } else { video.src = url; video.play(); }
+
+            // Suggest Same Category
+            const suggestions = allChannels.filter(c => c.group === group && c.name !== name);
+            document.getElementById('suggestion-title').innerHTML = `<i data-lucide="sparkles" color="var(--primary)"></i> More from ${group}`;
+            renderGrid(suggestions, 'suggestion-grid', true);
+            lucide.createIcons();
+            document.getElementById('player-overlay').scrollTo(0,0);
             showControls();
         }
 
         function setupQuality() {
-            const list = document.getElementById('quality-list');
+            const menu = document.getElementById('quality-menu');
             const sortedLevels = hls.levels.map((l, i) => ({...l, index: i})).sort((a, b) => b.height - a.height);
             
-            list.innerHTML = sortedLevels.map(l => {
+            menu.innerHTML = sortedLevels.map(l => {
                 let label = l.height;
-                if(l.height >= 1080) label = "FHD";
-                else if(l.height >= 720) label = "HD";
-                else if(l.height >= 480) label = "SD";
-                return `<div class="s-item" onclick="hls.currentLevel=${l.index}; toggleSettings()">${label}</div>`;
+                if(l.height >= 1080) label = "1080 FHD";
+                else if(l.height >= 720) label = "720 HD";
+                else if(l.height >= 480) label = "480 SD";
+                return `<div class="q-item ${hls.currentLevel === l.index ? 'active' : ''}" onclick="hls.currentLevel=${l.index}; toggleSettings()">${label}</div>`;
             }).join('');
-        }
-
-        video.onplaying = () => document.getElementById('video-loader').style.display = 'none';
-
-        function togglePlay() {
-            video.paused ? video.play() : video.pause();
-            const icon = document.getElementById('play-btn');
-            icon.setAttribute('data-lucide', video.paused ? 'play' : 'pause');
-            lucide.createIcons();
-        }
-
-        function toggleMute() {
-            video.muted = !video.muted;
-            const icon = document.getElementById('mute-btn');
-            icon.setAttribute('data-lucide', video.muted ? 'volume-x' : 'volume-2');
-            lucide.createIcons();
         }
 
         video.addEventListener('timeupdate', () => {
             const pBar = document.getElementById('p-bar');
+            const timeDisplay = document.getElementById('time-display');
             if (video.duration) {
                 pBar.style.width = (video.currentTime / video.duration) * 100 + '%';
-            } else { pBar.style.width = '100%'; }
+                timeDisplay.innerText = formatTime(video.currentTime) + " / " + formatTime(video.duration);
+            } else {
+                timeDisplay.innerText = "LIVE"; pBar.style.width = '100%';
+            }
         });
+
+        function formatTime(s) {
+            let m = Math.floor(s / 60); let sec = Math.floor(s % 60);
+            return (m < 10 ? '0'+m : m) + ":" + (sec < 10 ? '0'+sec : sec);
+        }
+
+        video.onplaying = () => document.getElementById('video-loader').style.display = 'none';
+
+        function togglePlay() { 
+            video.paused ? video.play() : video.pause(); 
+            document.getElementById('play-btn').setAttribute('data-lucide', video.paused ? 'play' : 'pause');
+            lucide.createIcons();
+            showControls();
+        }
+
+        function toggleMute() { 
+            video.muted = !video.muted; 
+            document.getElementById('mute-btn').setAttribute('data-lucide', video.muted ? 'volume-x' : 'volume-2');
+            lucide.createIcons();
+        }
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) wrapper.requestFullscreen();
@@ -353,24 +386,34 @@
         }
 
         function closePlayer() { video.pause(); document.getElementById('player-overlay').style.display = 'none'; }
-        function toggleSettings() { const m = document.getElementById('settings-menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; }
+        function toggleSettings() { const m = document.getElementById('quality-menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; }
         function toggleModal(s) { document.getElementById('importModal').style.display = s ? 'flex' : 'none'; }
-        
         function loadUrl() { const u = document.getElementById('m3uUrl').value; if(u) { fetchPlaylist(u); toggleModal(false); } }
-        
         function loadFile(e) {
-            const file = e.target.files[0];
             const reader = new FileReader();
-            reader.onload = (event) => { parseM3U(event.target.result); toggleModal(false); };
-            reader.readAsText(file);
+            reader.onload = (ev) => { parseM3U(ev.target.result); toggleModal(false); };
+            reader.readAsText(e.target.files[0]);
         }
 
         function handleSearch() {
             const q = document.getElementById('search').value.toLowerCase();
-            renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)));
+            renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)), 'channel-grid');
         }
 
-        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            const isLight = body.classList.toggle('light-mode');
+            icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
+            lucide.createIcons();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (document.getElementById('player-overlay').style.display === 'flex') {
+                if (e.key.toLowerCase() === 'f') toggleFullScreen();
+                if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+            }
+        });
     </script>
 </body>
 </html>
