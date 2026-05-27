@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EliteTV | Premium Streaming</title>
+    <title>EliteTV | Red Premium</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -11,8 +11,7 @@
 
     <style>
         :root {
-            --primary: #6366f1;
-            --accent: #f90d00;
+            --primary: #f90d00;
             --bg: #050507;
             --surface: #111115;
             --glass: rgba(255, 255, 255, 0.04);
@@ -21,123 +20,130 @@
             --text-sec: #94a3b8;
         }
 
-        .light-mode {
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --text-main: #0f172a;
-            --text-sec: #64748b;
-            --border: rgba(0, 0, 0, 0.06);
-            --glass: rgba(0, 0, 0, 0.02);
+        body.light-mode {
+            --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a;
+            --text-sec: #64748b; --border: rgba(0, 0, 0, 0.06); --glass: rgba(0, 0, 0, 0.02);
         }
-
-        /* --- Custom Scrollbar --- */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background-color: var(--bg); color: var(--text-main); 
-            overflow-x: hidden; transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; transition: 0.3s; }
 
-        /* --- Header --- */
+        /* --- Header with Logo --- */
         header {
-            position: sticky; top: 0; z-index: 1000; background: var(--header-bg, rgba(5, 5, 7, 0.8));
+            position: sticky; top: 0; z-index: 1000; background: rgba(5, 5, 7, 0.8);
             backdrop-filter: blur(25px); padding: 1rem 5%; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
         }
-        .brand { font-size: 1.6rem; font-weight: 900; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-
-        .search-container { 
-            flex: 0 1 400px; background: var(--glass); border: 1px solid var(--border); 
-            padding: 8px 16px; border-radius: 14px; display: flex; align-items: center; gap: 10px;
-            transition: all 0.3s ease;
+        .brand { 
+            font-size: 1.6rem; font-weight: 900; cursor: pointer; 
+            display: flex; align-items: center; gap: 10px;
         }
-        .search-container:focus-within { border-color: var(--primary); background: rgba(255,255,255,0.08); box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
-        .search-container input { background: transparent; border: none; color: var(--text-main); outline: none; width: 100%; font-size: 0.9rem; font-weight: 500; }
+        .brand i { color: #fff; } /* Logo Color */
+        .brand span { background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .nav-btns { display: flex; gap: 10px; }
-        .icon-btn { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .icon-btn:hover { background: var(--primary); border-color: var(--primary); color: white; transform: translateY(-2px); }
+        .search-container { flex: 0 1 400px; background: var(--glass); border: 1px solid var(--border); padding: 8px 16px; border-radius: 14px; display: flex; align-items: center; gap: 10px; }
+        .search-container input { background: transparent; border: none; color: var(--text-main); outline: none; width: 100%; font-size: 0.9rem; }
 
-        /* --- Category Section --- */
+        /* --- Category (Red Active) --- */
         .cat-nav { position: sticky; top: 72px; z-index: 900; background: var(--bg); padding: 15px 0; border-bottom: 1px solid var(--border); }
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 0 5%; scrollbar-width: none; }
-        .categories::-webkit-scrollbar { display: none; }
-        .chip { 
-            padding: 10px 24px; background: var(--surface); border: 1px solid var(--border); 
-            border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; 
-            font-weight: 700; color: var(--text-sec); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); transform: scale(1.05); }
+        .chip { padding: 10px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; font-weight: 700; color: var(--text-sec); transition: 0.3s; }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- Grid & Stylish Cards --- */
+        /* --- Cards with Live Animation --- */
         .grid { display: grid; padding: 2rem 5% 100px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; }
-        .card { 
-            background: var(--surface); border-radius: 24px; border: 1px solid var(--border); 
-            overflow: hidden; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .card .poster-box { width: 100%; aspect-ratio: 1/1; background: #000; padding: 15px; display: flex; align-items: center; justify-content: center; }
-        .card img { max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
-        .card-info { padding: 15px; text-align: center; }
-        .card-info h3 { font-size: 0.8rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.2px; }
-
-        /* --- Live Badge --- */
-        .live-badge {
-            position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); 
-            backdrop-filter: blur(10px); padding: 4px 10px; border-radius: 8px; 
-            font-size: 0.65rem; font-weight: 900; display: flex; align-items: center; gap: 6px; z-index: 10;
-        }
-        .live-dot { width: 6px; height: 6px; background-color: var(--accent); border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 8px var(--accent); }
-        @keyframes blink { 50% { opacity: 0.3; } }
-
-        /* --- Player Overlay --- */
-        #player-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: none; flex-direction: column; overflow-y: auto; }
-        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; position: sticky; top: 0; z-index: 100; box-shadow: 0 10px 50px #000; }
-        video { width: 100%; height: 100%; }
+        .card { background: var(--surface); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: 0.4s; position: relative; }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); }
+        .card .poster-box { width: 100%; aspect-ratio: 1/1; background: #000; padding: 25px; display: flex; align-items: center; justify-content: center; }
+        .card img { max-width: 90%; max-height: 90%; object-fit: contain; }
         
-        .p-header { position: absolute; top: 20px; left: 20px; z-index: 200; display: flex; align-items: center; gap: 15px; }
-        .p-title { font-weight: 800; font-size: 1.1rem; color: white; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 10px #000; }
-        .p-pipe { color: var(--accent); font-weight: 900; font-size: 1.5rem; }
+        .live-tag {
+            position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px); padding: 4px 8px; border-radius: 6px;
+            display: flex; align-items: center; gap: 5px; font-size: 0.6rem; font-weight: 800; color: white;
+        }
+        .dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1.2s infinite; }
+        @keyframes blink { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
 
-        #video-loader { position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 50; }
-        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .card-info { padding: 15px; text-align: center; }
+        .card-info h3 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Quality Dropdown */
-        .settings-btn { position: absolute; bottom: 20px; right: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 50%; cursor: pointer; z-index: 150; }
-        #settings-menu { position: absolute; bottom: 75px; right: 20px; background: #111; border: 1px solid var(--border); border-radius: 16px; padding: 12px; display: none; z-index: 200; width: 200px; box-shadow: 0 20px 40px #000; }
-        .s-item { padding: 10px 15px; font-size: 0.85rem; cursor: pointer; border-radius: 10px; font-weight: 600; }
+        /* --- PLAYER OVERLAY --- */
+        #player-overlay { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; }
+        .video-container { position: relative; width: 100%; height: 100%; background: #000; overflow: hidden; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+
+        .controls-wrapper {
+            position: absolute; inset: 0; z-index: 10;
+            display: flex; flex-direction: column; justify-content: space-between;
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.7) 100%);
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        .video-container.show-controls .controls-wrapper { opacity: 1; }
+
+        .p-header { padding: 30px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); }
+        .p-header-left { display: flex; align-items: center; gap: 15px; }
+        .p-back { width: 45px; height: 45px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
+        .p-pipe { width: 4px; height: 30px; background: var(--primary); border-radius: 2px; }
+        .p-name { font-size: 1.4rem; font-weight: 800; color: white; letter-spacing: -0.5px; }
+
+        .p-bottom { padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
+        .progress-area { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; cursor: pointer; margin-bottom: 20px; }
+        
+        /* PLAIN RED PROGRESS BAR (GLOW REMOVED) */
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; }
+        
+        .settings-menu { position: absolute; bottom: 100px; right: 30px; background: rgba(20,20,25,0.95); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 16px; padding: 15px; display: none; min-width: 180px; }
+        .s-item { padding: 12px; cursor: pointer; border-radius: 8px; font-size: 0.9rem; font-weight: 700; color: white; transition: 0.2s; }
         .s-item:hover { background: var(--primary); }
 
-        /* Import Modal */
-        #importModal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 32px; box-shadow: 0 30px 60px #000; }
-        .modal-card input { width: 100%; padding: 14px; border-radius: 16px; background: #000; border: 1px solid var(--border); color: white; margin: 20px 0; outline: none; font-weight: 500; }
+        #video-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5; }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- Bottom Nav --- */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(10,10,12,0.8); backdrop-filter: blur(30px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #555; cursor: pointer; font-size: 0.7rem; font-weight: 800; gap: 6px; transition: 0.3s; }
+        /* --- PROFESSIONAL MODAL & UPLOAD --- */
+        #importModal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-card { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 32px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .modal-card h2 { font-weight: 800; margin-bottom: 20px; font-size: 1.5rem; }
+        
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group input { width: 100%; padding: 16px; border-radius: 16px; background: #000; border: 1px solid var(--border); color: white; outline: none; font-size: 0.9rem; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--primary); }
+
+        /* PROFESSIONAL UPLOAD BOX */
+        .upload-area {
+            border: 2px dashed var(--border); background: rgba(255,255,255,0.02);
+            padding: 30px 20px; border-radius: 20px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            margin-bottom: 25px; transition: 0.3s;
+        }
+        .upload-area:hover { background: rgba(255,255,255,0.05); border-color: var(--primary); }
+        .upload-area i { color: var(--text-sec); transition: 0.3s; }
+        .upload-area:hover i { color: var(--primary); transform: translateY(-5px); }
+        .upload-area p { font-size: 0.85rem; color: var(--text-sec); font-weight: 600; }
+        .upload-area span { font-size: 0.7rem; color: #555; }
+
+        .btn-main { width: 100%; padding: 16px; border-radius: 16px; background: var(--primary); color: white; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(249, 13, 0, 0.3); }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(5,5,7,0.8); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); cursor: pointer; font-size: 0.7rem; font-weight: 800; gap: 5px; }
         .nav-item.active { color: var(--primary); }
-
-        .hidden { display: none !important; }
     </style>
 </head>
-<body>
+<body id="body-main">
 
     <header>
-        <div class="brand" onclick="location.reload()">Elite<span>TV</span></div>
+        <div class="brand" onclick="location.reload()">
+            <i data-lucide="tv"></i>
+            <span>EliteTV</span>
+        </div>
         <div class="search-container">
             <i data-lucide="search" size="18" color="#666"></i>
-            <input type="text" id="search" placeholder="Search channels, sports, news..." oninput="handleSearch()">
+            <input type="text" id="search" placeholder="Search channels..." oninput="handleSearch()">
         </div>
         <div class="nav-btns">
-            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon" id="theme-icon"></i></button>
-            <button class="icon-btn" onclick="toggleModal(true)"><i data-lucide="plus"></i></button>
+            <button class="icon-btn" onclick="toggleTheme()" style="background:none; border:none; color:white; cursor:pointer;"><i data-lucide="moon"></i></button>
         </div>
     </header>
 
@@ -145,184 +151,226 @@
         <div id="categories" class="categories"></div>
     </div>
 
-    <div id="channel-grid" class="grid">
-        <p style="grid-column: 1/-1; text-align: center; padding: 100px; opacity: 0.5;">EliteTV is preparing your network...</p>
-    </div>
+    <div id="channel-grid" class="grid"></div>
 
-    <!-- Pro Player Overlay -->
+    <!-- PRO PLAYER -->
     <div id="player-overlay">
-        <div class="video-box">
+        <div class="video-container" id="video-wrapper">
             <div id="video-loader"><div class="spinner"></div></div>
             <video id="video" playsinline></video>
             
-            <!-- Player Header -->
-            <div class="p-header">
-                <i data-lucide="arrow-left" onclick="closePlayer()" style="cursor:pointer; background:rgba(0,0,0,0.5); border-radius:50%; padding:8px;"></i>
-                <div class="p-title"><span class="p-pipe">|</span> <span id="p-name">CHANNEL</span></div>
-            </div>
+            <div class="controls-wrapper">
+                <div class="p-header">
+                    <div class="p-header-left">
+                        <div class="p-back" onclick="closePlayer()"><i data-lucide="arrow-left" color="white"></i></div>
+                        <div class="p-pipe"></div>
+                        <div class="p-name" id="p-name-txt">Channel</div>
+                    </div>
+                    <div class="p-back" onclick="closePlayer()" style="background: rgba(255,255,255,0.1);"><i data-lucide="x" color="white"></i></div>
+                </div>
 
-            <button class="settings-btn" onclick="toggleSettings()"><i data-lucide="sliders"></i></button>
-            <div id="settings-menu"></div>
-        </div>
-        
-        <div style="padding: 30px 5%; background: var(--bg);">
-            <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <i data-lucide="sparkles" size="20"></i> Recommended for You
-            </h4>
-            <div id="suggestion-grid" class="grid" style="padding: 0;"></div>
+                <div class="p-bottom">
+                    <div class="progress-area" id="p-container">
+                        <div class="progress-bar" id="p-bar"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: white; align-items: center;">
+                        <div style="display: flex; gap: 20px;">
+                            <i data-lucide="play" class="p-icon" id="play-btn" onclick="togglePlay()"></i>
+                            <i data-lucide="volume-2" class="p-icon" id="mute-btn" onclick="toggleMute()"></i>
+                        </div>
+                        <div style="display: flex; gap: 20px;">
+                            <i data-lucide="settings" class="p-icon" onclick="toggleSettings()"></i>
+                            <i data-lucide="maximize" class="p-icon" onclick="toggleFullScreen()"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-menu" id="settings-menu">
+                    <p style="font-size: 0.7rem; color: #888; margin-bottom: 10px; font-weight: 800;">QUALITY</p>
+                    <div id="quality-list"></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Bottom Nav -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="location.reload()"><i data-lucide="home"></i><span>HOME</span></div>
-        <div class="nav-item" onclick="toggleModal(true)"><i data-lucide="plus-square"></i><span>IMPORT</span></div>
+        <div class="nav-item" onclick="toggleModal(true)"><i data-lucide="plus-circle"></i><span>IMPORT</span></div>
     </div>
 
-    <!-- Import Modal -->
-    <div id="importModal" class="modal-overlay">
+    <!-- Professional Import Modal -->
+    <div id="importModal">
         <div class="modal-card">
-            <h2 style="text-align: center; font-weight: 800;">Manage Library</h2>
-            <p style="text-align: center; font-size: 0.8rem; color: var(--text-sec); margin-top: 5px;">Enter M3U link or upload local file</p>
-            <input type="text" id="m3uUrl" placeholder="https://example.com/playlist.m3u">
-            <button class="icon-btn" style="width: 100%; background: var(--primary); color: white; font-weight: 800; padding: 15px; border-radius: 16px;" onclick="loadUrl()">FETCH NETWORK</button>
-            <button class="icon-btn" style="width: 100%; background: #222; margin-top: 10px; font-weight: 800; padding: 15px; border-radius: 16px;" onclick="document.getElementById('fileInput').click()">UPLOAD FILE</button>
-            <input type="file" id="fileInput" class="hidden" accept=".m3u" onchange="loadFile(event)">
-            <button onclick="toggleModal(false)" style="width: 100%; margin-top: 20px; background: transparent; border: none; color: var(--accent); cursor: pointer; font-weight: 800;">CANCEL</button>
+            <h2>Add Playlist</h2>
+            
+            <div class="input-group">
+                <input type="text" id="m3uUrl" placeholder="Enter M3U URL here...">
+            </div>
+
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <i data-lucide="upload-cloud" size="32"></i>
+                <p>Choose local .m3u file</p>
+                <span>Supported: .m3u, .m3u8</span>
+            </div>
+            
+            <input type="file" id="fileInput" style="display:none" accept=".m3u" onchange="loadFile(event)">
+            
+            <button class="btn-main" onclick="loadUrl()">SYNC CONTENT</button>
+            <button onclick="toggleModal(false)" style="margin-top:20px; background:none; border:none; color:var(--text-sec); cursor:pointer; font-weight:700;">Close Modal</button>
         </div>
     </div>
 
     <script>
-        const WORKER = 'https://yashiptvplaylist.bgmihackerr12.workers.dev/?url='; 
-        const JIO_M3U = 'https://yashlivetv.fun/app/tsjio_playlist.m3u';
-        let allChannels = [], hls = null;
+        const PROXY = 'https://yashiptvplaylist.bgmihackerr12.workers.dev/?url='; 
+        const M3U = 'https://yashlivetv.fun/app/tsjio_playlist.m3u';
+        let hls = null, allChannels = [];
+        const video = document.getElementById('video');
+        const wrapper = document.getElementById('video-wrapper');
 
         lucide.createIcons();
-        window.onload = () => fetchPlaylist(JIO_M3U);
+
+        // Auto Hide Controls
+        let timer;
+        function showControls() {
+            wrapper.classList.add('show-controls');
+            clearTimeout(timer);
+            timer = setTimeout(() => { if(!video.paused) wrapper.classList.remove('show-controls'); }, 3000);
+        }
+        wrapper.addEventListener('mousemove', showControls);
+        wrapper.addEventListener('touchstart', showControls);
+
+        window.onload = () => fetchPlaylist(M3U);
 
         async function fetchPlaylist(url) {
             try {
-                const res = await fetch(WORKER + encodeURIComponent(url));
+                const res = await fetch(PROXY + encodeURIComponent(url));
                 const data = await res.text();
                 parseM3U(data);
-            } catch (e) {
-                document.getElementById('channel-grid').innerHTML = '<p style="text-align:center; padding:100px; color:red;">Failed to reach network. Use Import.</p>';
-            }
+            } catch (e) { console.error(e); }
         }
 
         function parseM3U(content) {
-            const lines = content.split('\n');
             const channels = [];
             let current = null;
-
-            for (let line of lines) {
+            content.split('\n').forEach(line => {
                 line = line.trim();
                 if (line.startsWith('#EXTINF:')) {
-                    const name = line.split(',')[1] || "Unnamed";
-                    const logo = line.match(/tvg-logo="([^"]+)"/)?.[1] || '';
-                    const group = line.match(/group-title="([^"]+)"/)?.[1] || 'General';
-                    current = { name: name.trim(), logo, group };
-                } else if (line.startsWith('http') && current) {
-                    current.url = line;
-                    channels.push(current);
-                    current = null;
+                    current = { 
+                        name: line.split(',')[1] || "Unknown", 
+                        logo: line.match(/tvg-logo="([^"]+)"/)?.[1] || '',
+                        group: line.match(/group-title="([^"]+)"/)?.[1] || 'General'
+                    };
+                } else if (line.startsWith('http')) {
+                    if(current) { current.url = line; channels.push(current); current = null; }
                 }
-            }
+            });
             allChannels = channels;
             renderCategories();
-            renderGrid(allChannels, 'channel-grid');
+            renderGrid(allChannels);
         }
 
-        function renderGrid(list, target, isSug = false) {
-            const container = document.getElementById(target);
-            container.innerHTML = '';
-            const items = isSug ? list.slice(0, 18) : list.slice(0, 600);
-            items.forEach(ch => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `
-                    <div class="live-badge"><div class="live-dot"></div> LIVE</div>
-                    <div class="poster-box"><img src="${ch.logo}" loading="lazy" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'"></div>
-                    <div class="card-info"><h3>${ch.name}</h3></div>`;
-                div.onclick = () => playStream(ch);
-                container.appendChild(div);
-            });
+        function renderGrid(list) {
+            const grid = document.getElementById('channel-grid');
+            grid.innerHTML = list.slice(0, 400).map(ch => `
+                <div class="card" onclick="playStream('${ch.url}', '${ch.name.replace(/'/g, "\\'")}')">
+                    <div class="live-tag"><div class="dot"></div> LIVE</div>
+                    <div class="poster-box"><img src="${ch.logo}" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'"></div>
+                    <div class="card-info"><h3>${ch.name}</h3></div>
+                </div>
+            `).join('');
         }
 
         function renderCategories() {
             const cats = ['All', ...new Set(allChannels.map(c => c.group))];
-            const container = document.getElementById('categories');
-            container.innerHTML = '';
-            cats.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = 'chip' + (cat === 'All' ? ' active' : '');
-                div.innerText = cat;
-                div.onclick = () => {
-                    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-                    div.classList.add('active');
-                    renderGrid(cat === 'All' ? allChannels : allChannels.filter(c => c.group === cat), 'channel-grid');
-                };
-                container.appendChild(div);
-            });
+            document.getElementById('categories').innerHTML = cats.map(cat => `
+                <div class="chip ${cat === 'All' ? 'active' : ''}" onclick="filterCat(this, '${cat}')">${cat}</div>
+            `).join('');
         }
 
-        function playStream(ch) {
-            const v = document.getElementById('video');
-            const loader = document.getElementById('video-loader');
-            const overlay = document.getElementById('player-overlay');
-            overlay.style.display = 'flex';
-            document.getElementById('p-name').innerText = ch.name;
-            loader.style.display = 'flex';
+        function filterCat(el, cat) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderGrid(cat === 'All' ? allChannels : allChannels.filter(c => c.group === cat));
+        }
+
+        function playStream(url, name) {
+            document.getElementById('p-name-txt').innerText = name;
+            document.getElementById('player-overlay').style.display = 'flex';
+            document.getElementById('video-loader').style.display = 'flex';
 
             if (hls) hls.destroy();
             if (Hls.isSupported()) {
                 hls = new Hls();
-                hls.loadSource(ch.url);
-                hls.attachMedia(v);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => { v.play(); setupQuality(); });
-            } else { v.src = ch.url; }
-
-            v.onplaying = () => loader.style.display = 'none';
-            v.onwaiting = () => loader.style.display = 'flex';
-
-            renderGrid(allChannels.filter(c => c.group === ch.group && c.name !== ch.name), 'suggestion-grid', true);
-            overlay.scrollTo({top: 0, behavior: 'smooth'});
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play(); setupQuality(); });
+            } else {
+                video.src = url;
+                video.play();
+            }
+            showControls();
         }
 
         function setupQuality() {
-            const menu = document.getElementById('settings-menu');
-            menu.innerHTML = '<p style="font-size:0.65rem; color:#555; font-weight:800; margin-bottom:10px;">STREAM QUALITY</p>';
-            hls.levels.forEach((l, i) => {
-                const d = document.createElement('div');
-                d.className = 's-item'; d.innerText = l.height + 'p HD';
-                d.onclick = () => { hls.currentLevel = i; toggleSettings(); };
-                menu.appendChild(d);
-            });
-            if(hls.audioTracks.length > 1) {
-                menu.innerHTML += '<p style="font-size:0.65rem; color:#555; font-weight:800; margin:10px 0 10px 0;">AUDIO TRACKS</p>';
-                hls.audioTracks.forEach((t, i) => {
-                    const d = document.createElement('div');
-                    d.className = 's-item'; d.innerText = t.name || 'Language ' + i;
-                    d.onclick = () => { hls.audioTrack = i; toggleSettings(); };
-                    menu.appendChild(d);
-                });
-            }
+            const list = document.getElementById('quality-list');
+            const sortedLevels = hls.levels.map((l, i) => ({...l, index: i})).sort((a, b) => b.height - a.height);
+            
+            list.innerHTML = sortedLevels.map(l => {
+                let label = l.height;
+                if(l.height >= 1080) label = "FHD";
+                else if(l.height >= 720) label = "HD";
+                else if(l.height >= 480) label = "SD";
+                return `<div class="s-item" onclick="hls.currentLevel=${l.index}; toggleSettings()">${label}</div>`;
+            }).join('');
         }
 
-        function toggleTheme() {
-            const body = document.body;
-            const icon = document.getElementById('theme-icon');
-            const isLight = body.classList.toggle('light-mode');
-            icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
+        video.onplaying = () => document.getElementById('video-loader').style.display = 'none';
+
+        function togglePlay() {
+            video.paused ? video.play() : video.pause();
+            const icon = document.getElementById('play-btn');
+            icon.setAttribute('data-lucide', video.paused ? 'play' : 'pause');
             lucide.createIcons();
         }
 
+        function toggleMute() {
+            video.muted = !video.muted;
+            const icon = document.getElementById('mute-btn');
+            icon.setAttribute('data-lucide', video.muted ? 'volume-x' : 'volume-2');
+            lucide.createIcons();
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const pBar = document.getElementById('p-bar');
+            if (video.duration) {
+                pBar.style.width = (video.currentTime / video.duration) * 100 + '%';
+            } else { pBar.style.width = '100%'; }
+        });
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) wrapper.requestFullscreen();
+            else document.exitFullscreen();
+        }
+
+        function closePlayer() { video.pause(); document.getElementById('player-overlay').style.display = 'none'; }
         function toggleSettings() { const m = document.getElementById('settings-menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; }
-        function closePlayer() { document.getElementById('video').pause(); document.getElementById('player-overlay').style.display = 'none'; }
         function toggleModal(s) { document.getElementById('importModal').style.display = s ? 'flex' : 'none'; }
+        
         function loadUrl() { const u = document.getElementById('m3uUrl').value; if(u) { fetchPlaylist(u); toggleModal(false); } }
-        function loadFile(e) { const r = new FileReader(); r.onload = x => { parseM3U(x.target.result); toggleModal(false); }; r.readAsText(e.target.files[0]); }
-        function handleSearch() { const q = document.getElementById('search').value.toLowerCase(); renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)), 'channel-grid'); }
+        
+        function loadFile(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (event) => { parseM3U(event.target.result); toggleModal(false); };
+            reader.readAsText(file);
+        }
+
+        function handleSearch() {
+            const q = document.getElementById('search').value.toLowerCase();
+            renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)));
+        }
+
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
     </script>
 </body>
 </html>
