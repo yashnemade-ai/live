@@ -2,98 +2,126 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EliteTV | Ultra Streaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>EliteTV | Premium Streaming</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary: #6366f1; --accent: #f90d00; --bg: #030712;
-            --card-bg: #111827; --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --accent: #f90d00;
+            --bg: #050507;
+            --surface: #111115;
+            --glass: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-sec: #94a3b8;
         }
 
-        /* --- Global Styles --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
-        body { 
-            background-color: var(--bg); color: white; 
-            overflow-x: hidden; scrollbar-width: none; /* Firefox */
+        .light-mode {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-sec: #64748b;
+            --border: rgba(0, 0, 0, 0.06);
+            --glass: rgba(0, 0, 0, 0.02);
         }
-        /* Hide Scrollbar for Chrome, Safari and Opera */
-        ::-webkit-scrollbar { display: none; }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg); color: var(--text-main); 
+            overflow-x: hidden; transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
         /* --- Header --- */
         header {
-            position: sticky; top: 0; z-index: 1000; background: rgba(3, 7, 18, 0.9);
-            backdrop-filter: blur(20px); padding: 1rem 5%; display: flex;
+            position: sticky; top: 0; z-index: 1000; background: var(--header-bg, rgba(5, 5, 7, 0.8));
+            backdrop-filter: blur(25px); padding: 1rem 5%; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
         }
-        .brand { font-size: 1.6rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .brand { font-size: 1.6rem; font-weight: 900; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
-        .btn-import { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-
-        /* --- Categories --- */
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 1.2rem 5%; scrollbar-width: none; }
-        .chip { padding: 8px 18px; background: var(--glass); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; transition: 0.3s; }
-        .chip.active { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
-
-        /* --- Grid --- */
-        .grid { display: grid; padding: 0 5% 50px; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: 0.3s ease; position: relative; }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card .poster { width: 100%; aspect-ratio: 16/10; object-fit: contain; background: #000; padding: 8px; }
-        .card h3 { font-size: 0.8rem; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* Live Badge */
-        .live-badge {
-            position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6);
-            padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: 800;
-            display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px);
+        .search-container { 
+            flex: 0 1 400px; background: var(--glass); border: 1px solid var(--border); 
+            padding: 8px 16px; border-radius: 14px; display: flex; align-items: center; gap: 10px;
+            transition: all 0.3s ease;
         }
-        .dot { width: 6px; height: 6px; background-color: var(--accent); border-radius: 50%; animation: blink 1s infinite; }
+        .search-container:focus-within { border-color: var(--primary); background: rgba(255,255,255,0.08); box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+        .search-container input { background: transparent; border: none; color: var(--text-main); outline: none; width: 100%; font-size: 0.9rem; font-weight: 500; }
+
+        .nav-btns { display: flex; gap: 10px; }
+        .icon-btn { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .icon-btn:hover { background: var(--primary); border-color: var(--primary); color: white; transform: translateY(-2px); }
+
+        /* --- Category Section --- */
+        .cat-nav { position: sticky; top: 72px; z-index: 900; background: var(--bg); padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 0 5%; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .chip { 
+            padding: 10px 24px; background: var(--surface); border: 1px solid var(--border); 
+            border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; 
+            font-weight: 700; color: var(--text-sec); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); transform: scale(1.05); }
+
+        /* --- Grid & Stylish Cards --- */
+        .grid { display: grid; padding: 2rem 5% 100px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; }
+        .card { 
+            background: var(--surface); border-radius: 24px; border: 1px solid var(--border); 
+            overflow: hidden; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .card .poster-box { width: 100%; aspect-ratio: 1/1; background: #000; padding: 15px; display: flex; align-items: center; justify-content: center; }
+        .card img { max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
+        .card-info { padding: 15px; text-align: center; }
+        .card-info h3 { font-size: 0.8rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.2px; }
+
+        /* --- Live Badge --- */
+        .live-badge {
+            position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); 
+            backdrop-filter: blur(10px); padding: 4px 10px; border-radius: 8px; 
+            font-size: 0.65rem; font-weight: 900; display: flex; align-items: center; gap: 6px; z-index: 10;
+        }
+        .live-dot { width: 6px; height: 6px; background-color: var(--accent); border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 8px var(--accent); }
         @keyframes blink { 50% { opacity: 0.3; } }
 
-        /* --- Optimized Player Overlay --- */
-        #player-overlay { 
-            position: fixed; inset: 0; background: var(--bg); z-index: 5000; 
-            display: none; flex-direction: column; overflow-y: auto; scrollbar-width: none;
-        }
-        #player-overlay::-webkit-scrollbar { display: none; }
-
-        .video-wrapper { 
-            width: 100%; max-width: 1000px; margin: 0 auto; 
-            aspect-ratio: 16/9; background: #000; position: sticky; top: 0; z-index: 10;
-        }
-        video { width: 100%; height: 100%; display: block; }
+        /* --- Player Overlay --- */
+        #player-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: none; flex-direction: column; overflow-y: auto; }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; position: sticky; top: 0; z-index: 100; box-shadow: 0 10px 50px #000; }
+        video { width: 100%; height: 100%; }
         
-        #video-loader { position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 5; }
-        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        .p-header { position: absolute; top: 20px; left: 20px; z-index: 200; display: flex; align-items: center; gap: 15px; }
+        .p-title { font-weight: 800; font-size: 1.1rem; color: white; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 10px #000; }
+        .p-pipe { color: var(--accent); font-weight: 900; font-size: 1.5rem; }
+
+        #video-loader { position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Player Header */
-        .p-header { 
-            position: absolute; top: 15px; left: 15px; z-index: 100; 
-            display: flex; align-items: center; gap: 10px; 
-        }
-        .p-title { font-weight: 800; font-size: 1.1rem; text-transform: uppercase; color: white; display: flex; align-items: center; gap: 8px; }
-        .p-pipe { color: var(--accent); font-weight: 900; font-size: 1.4rem; }
-
-        /* Settings Dropdown */
-        .settings-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; color: white; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 20; }
-        #settings-menu { 
-            position: absolute; bottom: 60px; right: 15px; background: #111; border: 1px solid var(--border);
-            border-radius: 12px; padding: 10px; display: none; z-index: 30; width: 180px; box-shadow: 0 10px 25px #000;
-        }
-        .setting-item { padding: 10px; font-size: 0.8rem; cursor: pointer; border-radius: 8px; }
-        .setting-item:hover { background: var(--primary); }
+        /* Quality Dropdown */
+        .settings-btn { position: absolute; bottom: 20px; right: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid var(--border); color: white; padding: 10px; border-radius: 50%; cursor: pointer; z-index: 150; }
+        #settings-menu { position: absolute; bottom: 75px; right: 20px; background: #111; border: 1px solid var(--border); border-radius: 16px; padding: 12px; display: none; z-index: 200; width: 200px; box-shadow: 0 20px 40px #000; }
+        .s-item { padding: 10px 15px; font-size: 0.85rem; cursor: pointer; border-radius: 10px; font-weight: 600; }
+        .s-item:hover { background: var(--primary); }
 
         /* Import Modal */
-        #import-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--card-bg); border: 1px solid var(--border); width: 100%; max-width: 400px; padding: 2rem; border-radius: 20px; }
-        
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 900; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #555; cursor: pointer; font-size: 0.7rem; font-weight: 700; }
+        #importModal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-card { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 32px; box-shadow: 0 30px 60px #000; }
+        .modal-card input { width: 100%; padding: 14px; border-radius: 16px; background: #000; border: 1px solid var(--border); color: white; margin: 20px 0; outline: none; font-weight: 500; }
+
+        /* --- Bottom Nav --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(10,10,12,0.8); backdrop-filter: blur(30px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #555; cursor: pointer; font-size: 0.7rem; font-weight: 800; gap: 6px; transition: 0.3s; }
         .nav-item.active { color: var(--primary); }
 
         .hidden { display: none !important; }
@@ -102,44 +130,44 @@
 <body>
 
     <header>
-        <div class="brand" onclick="location.reload()"><i data-lucide="tv"></i> EliteTV</div>
-        <div class="header-actions">
-            <button class="btn-import" onclick="openImport()"><i data-lucide="plus-circle"></i> Import</button>
+        <div class="brand" onclick="location.reload()">Elite<span>TV</span></div>
+        <div class="search-container">
+            <i data-lucide="search" size="18" color="#666"></i>
+            <input type="text" id="search" placeholder="Search channels, sports, news..." oninput="handleSearch()">
+        </div>
+        <div class="nav-btns">
+            <button class="icon-btn" onclick="toggleTheme()"><i data-lucide="moon" id="theme-icon"></i></button>
+            <button class="icon-btn" onclick="toggleModal(true)"><i data-lucide="plus"></i></button>
         </div>
     </header>
 
-    <div id="categories" class="categories"></div>
-    <div id="channel-grid" class="grid"></div>
+    <div class="cat-nav">
+        <div id="categories" class="categories"></div>
+    </div>
 
-    <!-- Import Modal -->
-    <div id="import-modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:15px">External Playlist</h3>
-            <input type="text" id="m3uUrl" placeholder="Enter M3U Link..." style="width: 100%; padding: 12px; border-radius: 10px; background: #000; border: 1px solid var(--border); color: white; margin-bottom: 10px; outline:none;">
-            <button class="btn-import" style="width: 100%; justify-content: center;" onclick="loadFromUrl()">Fetch Network</button>
-            <div style="text-align:center; margin:10px; color:#444">OR</div>
-            <button class="btn-import" style="width: 100%; justify-content: center; background: #222" onclick="document.getElementById('fileInput').click()">Upload Local M3U</button>
-            <input type="file" id="fileInput" class="hidden" accept=".m3u" onchange="loadFromFile(event)">
-            <button onclick="closeImport()" style="width: 100%; margin-top: 15px; background: transparent; border: none; color: var(--accent); cursor:pointer; font-weight: 800;">Cancel</button>
-        </div>
+    <div id="channel-grid" class="grid">
+        <p style="grid-column: 1/-1; text-align: center; padding: 100px; opacity: 0.5;">EliteTV is preparing your network...</p>
     </div>
 
     <!-- Pro Player Overlay -->
     <div id="player-overlay">
-        <div class="video-wrapper">
+        <div class="video-box">
             <div id="video-loader"><div class="spinner"></div></div>
             <video id="video" playsinline></video>
+            
+            <!-- Player Header -->
             <div class="p-header">
-                <i data-lucide="arrow-left" onclick="closePlayer()" style="cursor:pointer; background:rgba(0,0,0,0.5); border-radius:50%; padding:5px;"></i>
+                <i data-lucide="arrow-left" onclick="closePlayer()" style="cursor:pointer; background:rgba(0,0,0,0.5); border-radius:50%; padding:8px;"></i>
                 <div class="p-title"><span class="p-pipe">|</span> <span id="p-name">CHANNEL</span></div>
             </div>
-            <button class="settings-btn" onclick="toggleSettings()"><i data-lucide="settings"></i></button>
+
+            <button class="settings-btn" onclick="toggleSettings()"><i data-lucide="sliders"></i></button>
             <div id="settings-menu"></div>
         </div>
         
-        <div style="padding: 25px 5%; background: var(--bg);">
-            <h4 style="color: var(--primary); margin-bottom: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
-                <i data-lucide="layers" size="18"></i> Similar Channels
+        <div style="padding: 30px 5%; background: var(--bg);">
+            <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i data-lucide="sparkles" size="20"></i> Recommended for You
             </h4>
             <div id="suggestion-grid" class="grid" style="padding: 0;"></div>
         </div>
@@ -148,58 +176,47 @@
     <!-- Bottom Nav -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="location.reload()"><i data-lucide="home"></i><span>HOME</span></div>
-        <div class="nav-item" onclick="openImport()"><i data-lucide="plus-square"></i><span>IMPORT</span></div>
+        <div class="nav-item" onclick="toggleModal(true)"><i data-lucide="plus-square"></i><span>IMPORT</span></div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="modal-overlay">
+        <div class="modal-card">
+            <h2 style="text-align: center; font-weight: 800;">Manage Library</h2>
+            <p style="text-align: center; font-size: 0.8rem; color: var(--text-sec); margin-top: 5px;">Enter M3U link or upload local file</p>
+            <input type="text" id="m3uUrl" placeholder="https://example.com/playlist.m3u">
+            <button class="icon-btn" style="width: 100%; background: var(--primary); color: white; font-weight: 800; padding: 15px; border-radius: 16px;" onclick="loadUrl()">FETCH NETWORK</button>
+            <button class="icon-btn" style="width: 100%; background: #222; margin-top: 10px; font-weight: 800; padding: 15px; border-radius: 16px;" onclick="document.getElementById('fileInput').click()">UPLOAD FILE</button>
+            <input type="file" id="fileInput" class="hidden" accept=".m3u" onchange="loadFile(event)">
+            <button onclick="toggleModal(false)" style="width: 100%; margin-top: 20px; background: transparent; border: none; color: var(--accent); cursor: pointer; font-weight: 800;">CANCEL</button>
+        </div>
     </div>
 
     <script>
-        // 1. WORKER & PROXY CONFIG
-        const CF_WORKER = 'https://yashiptvplaylist.bgmihackerr12.workers.dev/?url='; 
-        const FALLBACK = 'https://api.corsproxy.io/?url=';
+        const WORKER = 'https://yashiptvplaylist.bgmihackerr12.workers.dev/?url='; 
         const JIO_M3U = 'https://yashlivetv.fun/app/tsjio_playlist.m3u';
-        
-        let allChannels = [];
-        let hls = null;
+        let allChannels = [], hls = null;
 
         lucide.createIcons();
         window.onload = () => fetchPlaylist(JIO_M3U);
 
-        // 2. STABLE FETCH LOGIC
         async function fetchPlaylist(url) {
-            const grid = document.getElementById('channel-grid');
-            grid.innerHTML = '<p style="padding:20px; opacity:0.5;">Establishing secure connection...</p>';
-
-            const fetchData = async (proxy) => {
-                const response = await fetch(proxy + encodeURIComponent(url));
-                if (!response.ok) throw new Error();
-                return await response.text();
-            };
-
             try {
-                let data;
-                try {
-                    data = await fetchData(CF_WORKER);
-                } catch (e) {
-                    data = await fetchData(FALLBACK);
-                }
-                
-                if (data && data.includes("#EXTM3U")) {
-                    parseM3U(data);
-                } else {
-                    throw new Error();
-                }
-            } catch (err) {
-                grid.innerHTML = '<p style="padding:20px; color:red;">Source protected or link dead. Try Import.</p>';
+                const res = await fetch(WORKER + encodeURIComponent(url));
+                const data = await res.text();
+                parseM3U(data);
+            } catch (e) {
+                document.getElementById('channel-grid').innerHTML = '<p style="text-align:center; padding:100px; color:red;">Failed to reach network. Use Import.</p>';
             }
         }
 
-        // 3. ROBUST PARSER (Handles External M3Us better)
         function parseM3U(content) {
             const lines = content.split('\n');
             const channels = [];
             let current = null;
 
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
+            for (let line of lines) {
+                line = line.trim();
                 if (line.startsWith('#EXTINF:')) {
                     const name = line.split(',')[1] || "Unnamed";
                     const logo = line.match(/tvg-logo="([^"]+)"/)?.[1] || '';
@@ -219,14 +236,14 @@
         function renderGrid(list, target, isSug = false) {
             const container = document.getElementById(target);
             container.innerHTML = '';
-            const items = isSug ? list.slice(0, 18) : list.slice(0, 800);
+            const items = isSug ? list.slice(0, 18) : list.slice(0, 600);
             items.forEach(ch => {
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
-                    <div class="live-badge"><div class="dot"></div> LIVE</div>
-                    <img class="poster" src="${ch.logo}" loading="lazy" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'">
-                    <h3>${ch.name}</h3>`;
+                    <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+                    <div class="poster-box"><img src="${ch.logo}" loading="lazy" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'"></div>
+                    <div class="card-info"><h3>${ch.name}</h3></div>`;
                 div.onclick = () => playStream(ch);
                 container.appendChild(div);
             });
@@ -250,7 +267,7 @@
         }
 
         function playStream(ch) {
-            const video = document.getElementById('video');
+            const v = document.getElementById('video');
             const loader = document.getElementById('video-loader');
             const overlay = document.getElementById('player-overlay');
             overlay.style.display = 'flex';
@@ -258,51 +275,54 @@
             loader.style.display = 'flex';
 
             if (hls) hls.destroy();
-
             if (Hls.isSupported()) {
                 hls = new Hls();
                 hls.loadSource(ch.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play();
-                    setupQualityMenu();
-                });
-            } else {
-                video.src = ch.url;
-            }
+                hls.attachMedia(v);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => { v.play(); setupQuality(); });
+            } else { v.src = ch.url; }
 
-            video.onplaying = () => loader.style.display = 'none';
-            video.onwaiting = () => loader.style.display = 'flex';
+            v.onplaying = () => loader.style.display = 'none';
+            v.onwaiting = () => loader.style.display = 'flex';
 
             renderGrid(allChannels.filter(c => c.group === ch.group && c.name !== ch.name), 'suggestion-grid', true);
             overlay.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        function setupQualityMenu() {
+        function setupQuality() {
             const menu = document.getElementById('settings-menu');
-            menu.innerHTML = '<div style="font-size:0.6rem; color:#555; font-weight:800; margin-bottom:5px;">STREAM SETTINGS</div>';
+            menu.innerHTML = '<p style="font-size:0.65rem; color:#555; font-weight:800; margin-bottom:10px;">STREAM QUALITY</p>';
             hls.levels.forEach((l, i) => {
-                const div = document.createElement('div');
-                div.className = 'setting-item'; div.innerText = l.height + 'p';
-                div.onclick = () => { hls.currentLevel = i; toggleSettings(); };
-                menu.appendChild(div);
+                const d = document.createElement('div');
+                d.className = 's-item'; d.innerText = l.height + 'p HD';
+                d.onclick = () => { hls.currentLevel = i; toggleSettings(); };
+                menu.appendChild(d);
             });
             if(hls.audioTracks.length > 1) {
+                menu.innerHTML += '<p style="font-size:0.65rem; color:#555; font-weight:800; margin:10px 0 10px 0;">AUDIO TRACKS</p>';
                 hls.audioTracks.forEach((t, i) => {
-                    const div = document.createElement('div');
-                    div.className = 'setting-item'; div.innerText = 'Audio: ' + (t.name || i);
-                    div.onclick = () => { hls.audioTrack = i; toggleSettings(); };
-                    menu.appendChild(div);
+                    const d = document.createElement('div');
+                    d.className = 's-item'; d.innerText = t.name || 'Language ' + i;
+                    d.onclick = () => { hls.audioTrack = i; toggleSettings(); };
+                    menu.appendChild(d);
                 });
             }
         }
 
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            const isLight = body.classList.toggle('light-mode');
+            icon.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
+            lucide.createIcons();
+        }
+
         function toggleSettings() { const m = document.getElementById('settings-menu'); m.style.display = m.style.display === 'block' ? 'none' : 'block'; }
         function closePlayer() { document.getElementById('video').pause(); document.getElementById('player-overlay').style.display = 'none'; }
-        function openImport() { document.getElementById('import-modal').style.display = 'flex'; }
-        function closeImport() { document.getElementById('import-modal').style.display = 'none'; }
-        function loadFromUrl() { const u = document.getElementById('m3uUrl').value; if(u) { fetchPlaylist(u); closeImport(); }}
-        function loadFromFile(e) { const r = new FileReader(); r.onload = x => { parseM3U(x.target.result); closeImport(); }; r.readAsText(e.target.files[0]); }
+        function toggleModal(s) { document.getElementById('importModal').style.display = s ? 'flex' : 'none'; }
+        function loadUrl() { const u = document.getElementById('m3uUrl').value; if(u) { fetchPlaylist(u); toggleModal(false); } }
+        function loadFile(e) { const r = new FileReader(); r.onload = x => { parseM3U(x.target.result); toggleModal(false); }; r.readAsText(e.target.files[0]); }
+        function handleSearch() { const q = document.getElementById('search').value.toLowerCase(); renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)), 'channel-grid'); }
     </script>
 </body>
 </html>
