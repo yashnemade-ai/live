@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StreamX-TV</title>
+    <title>StreamX | Premium Red Experience</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -171,6 +171,78 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); cursor: pointer; font-size: 0.75rem; font-weight: 800; gap: 4px; }
         .nav-item.active { color: var(--primary); }
 
+.about-box{
+    background:#0f0f17;
+    border-radius:28px;
+    padding:24px;
+    margin-top:20px;
+    border:1px solid rgba(255,255,255,0.06);
+}
+
+.about-box h2{
+    font-size:30px;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:14px;
+    line-height:1.1;
+}
+
+.about-text{
+    font-size:15px;
+    line-height:1.7;
+    color:#b8b8c5;
+    margin-bottom:24px;
+}
+
+.features{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.feature-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    color:#fff;
+    font-size:16px;
+    font-weight:500;
+}
+
+.feature-item i{
+    width:20px;
+    height:20px;
+    color:#ff3b30;
+}
+
+.dev-tag{
+    margin-top:28px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#ff3b30;
+    font-weight:600;
+    font-size:15px;
+}
+
+.dev-tag i{
+    width:18px;
+    height:18px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:34px;
+    font-weight:800;
+    margin-bottom:10px;
+    color:#ff3b30;
+}
+
+.brand i{
+    color:#fff;
+}
         .spinner { width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
@@ -179,14 +251,63 @@
 
     <div id="loading-overlay"><div class="spinner"></div><div class="loader-txt">Your playlist is loading...</div></div>
 
-    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar(false)"></div>
-    <div id="sidebar">
-        <div class="brand"><i data-lucide="zap"></i><span>StreamX</span></div>
-        <div class="about-box">
-            <p>StreamX is a premium OTT engine designed for a cinematic experience. Designed by Yash Nemade.</p>
-            <div class="dev-tag"><i data-lucide="verified" size="18"></i> Developer: Yash Nemade</div>
-        </div>
+   <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar(false)"></div>
+
+<div id="sidebar">
+
+    <div class="brand">
+        <i data-lucide="zap"></i>
+        <span>StreamX</span>
     </div>
+
+    <div class="about-box">
+
+        <h2>Watch Live TV</h2>
+
+        <p class="about-text">
+            Stream live TV channels instantly using your own 
+            M3U URL or playlist file. Enjoy a fast, smooth, 
+            and fully responsive streaming experience on 
+            desktop and Android devices.
+        </p>
+
+        <div class="features">
+
+            <div class="feature-item">
+                <i data-lucide="tv-2"></i>
+                <span>Live TV Streaming</span>
+            </div>
+
+            <div class="feature-item">
+                <i data-lucide="link"></i>
+                <span>M3U URL & File Support</span>
+            </div>
+
+            <div class="feature-item">
+                <i data-lucide="smartphone"></i>
+                <span>Android Friendly</span>
+            </div>
+
+            <div class="feature-item">
+                <i data-lucide="monitor-play"></i>
+                <span>Responsive Interface</span>
+            </div>
+
+            <div class="feature-item">
+                <i data-lucide="rocket"></i>
+                <span>Fast Player</span>
+            </div>
+
+        </div>
+
+        <div class="dev-tag">
+            <i data-lucide="badge-check"></i>
+            <span>Developer: Yash Nemade</span>
+        </div>
+
+    </div>
+
+</div>
 
     <header>
         <div class="header-left">
@@ -419,6 +540,40 @@
         function handleSearch(inputEl) { renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(inputEl.value.toLowerCase())), 'channel-grid'); }
         function toggleTheme() { document.body.classList.toggle('light-mode'); const icon = document.getElementById('theme-icon'); icon.setAttribute('data-lucide', document.body.classList.contains('light-mode') ? 'sun' : 'moon'); lucide.createIcons(); }
         window.addEventListener('keydown', (e) => { if (document.getElementById('player-overlay').style.display === 'flex') { if (e.key.toLowerCase() === 'f') toggleFullScreen(); if (e.code === 'Space') { e.preventDefault(); togglePlay(); } } });
+        // --- Disable Inspect Element & View Source ---
+
+// 1. Disable Right Click (Context Menu)
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// 2. Disable Keyboard Shortcuts
+document.onkeydown = function(e) {
+    // F12 key disable
+    if (event.keyCode == 123) {
+        return false;
+    }
+    // Ctrl+Shift+I (Inspect)
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+        return false;
+    }
+    // Ctrl+Shift+J (Console)
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+        return false;
+    }
+    // Ctrl+Shift+C (Element Selector)
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+        return false;
+    }
+    // Ctrl+U (View Source)
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+        return false;
+    }
+};
+
+// 3. Anti-Debugger Trick (Optional but strong)
+// Isse agar koi inspect khol bhi leta hai toh browser "Paused in debugger" dikhayega
+setInterval(function() {
+    debugger;
+}, 100);
     </script>
 </body>
 </html>
