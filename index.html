@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>EliteTV | Ultra Pro Streaming</title>
+    <title>EliteTV | Premium Edition</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,6 +18,8 @@
             --border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
             --text-sec: #94a3b8;
+            --card-poster-bg: #000000; /* Dark mode card bg */
+            --logo-shadow: rgba(249, 13, 0, 0.6);
         }
 
         body.light-mode {
@@ -27,16 +29,13 @@
             --text-sec: #64748b;
             --border: rgba(0, 0, 0, 0.1);
             --glass: rgba(0, 0, 0, 0.05);
+            --card-poster-bg: #ffffff; /* REQUEST: Day mode card bg white */
+            --logo-shadow: rgba(0, 0, 0, 0.15);
         }
 
-        /* --- Hide Scrollbars (Invisible but Functional) --- */
-        * { 
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-        }
-        *::-webkit-scrollbar { 
-            display: none; /* Chrome, Safari, Opera */
-        }
+        /* --- Invisible Scrollbar --- */
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        *::-webkit-scrollbar { display: none; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; transition: 0.3s ease; }
@@ -44,66 +43,101 @@
         /* --- Header --- */
         header {
             position: sticky; top: 0; z-index: 1000; background: var(--bg);
-            backdrop-filter: blur(20px); padding: 0 5%; display: flex;
+            backdrop-filter: blur(25px); padding: 0 5%; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
             height: 70px;
         }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        
         .brand { font-size: 1.6rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .brand span { background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .header-right { display: flex; align-items: center; gap: 8px; }
-        .icon-btn { 
-            background: var(--glass); border: 1px solid var(--border); 
-            color: var(--text-main); padding: 10px; border-radius: 12px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        .brand i { color: var(--text-main); filter: drop-shadow(0 2px 4px var(--logo-shadow)); }
+        .brand span { 
+            background: linear-gradient(to right, var(--text-main), var(--primary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            filter: drop-shadow(0 2px 6px var(--logo-shadow));
         }
 
+        .hamburger { cursor: pointer; display: flex; align-items: center; padding: 8px; border-radius: 10px; transition: 0.2s; }
+        .hamburger:hover { background: var(--glass); }
+
+        /* Laptop Center Search */
+        .header-center-search {
+            flex: 0 1 400px; background: var(--glass); border: 1px solid var(--border); 
+            padding: 8px 16px; border-radius: 12px; display: flex; align-items: center; gap: 10px;
+        }
+        .header-center-search input { background: transparent; border: none; color: var(--text-main); outline: none; width: 100%; font-size: 0.9rem; }
+
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .icon-btn { 
+            background: var(--glass); border: 1px solid var(--border); 
+            color: var(--text-main); padding: 10px; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .search-icon-mobile { display: none; }
+
+        /* Mobile Search Overlay */
         #search-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: none; align-items: center; padding: 0 5%;
             z-index: 1100; gap: 15px;
         }
-        #search-input { flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 1.1rem; outline: none; }
+        #search-overlay input { flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 1.1rem; outline: none; }
+
+        @media (max-width: 768px) {
+            .header-center-search { display: none; }
+            .search-icon-mobile { display: flex; }
+        }
+
+        /* --- Sidebar --- */
+        #sidebar {
+            position: fixed; top: 0; left: -300px; width: 300px; height: 100%;
+            background: var(--surface); z-index: 5500; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 1px solid var(--border); padding: 40px 25px;
+            box-shadow: none; /* Shadow removed from left */
+        }
+        #sidebar.open { left: 0; }
+        .sidebar-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); 
+            z-index: 5400; display: none; backdrop-filter: blur(4px);
+        }
+        
+        .about-box { background: var(--bg); padding: 22px; border-radius: 20px; border: 1px solid var(--border); margin-top: 20px; }
+        .about-box h4 { margin-bottom: 8px; font-weight: 700; color: var(--text-main); }
+        .about-box p { font-size: 0.85rem; line-height: 1.6; color: var(--text-sec); }
+        .dev-tag { margin-top: 20px; font-weight: 800; font-size: 0.9rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
 
         /* --- Categories --- */
         .cat-nav { position: sticky; top: 70px; z-index: 900; background: var(--bg); padding: 12px 0; border-bottom: 1px solid var(--border); }
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 0 5%; }
-        .chip { padding: 10px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; font-weight: 700; color: var(--text-sec); }
+        .chip { padding: 9px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.8rem; font-weight: 700; color: var(--text-sec); }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* --- Grid --- */
-        .grid { display: grid; padding: 1rem 5% 100px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        /* --- Card Upgrade --- */
+        .grid { display: grid; padding: 1rem 5% 100px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
         .card { background: var(--surface); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; }
         .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card .poster-box { width: 100%; aspect-ratio: 1/1; background: #000; padding: 25px; display: flex; align-items: center; justify-content: center; }
-        .card img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        
+        /* Request: Card background changes based on mode */
+        .card .poster-box { 
+            width: 100%; aspect-ratio: 1/1; 
+            background: var(--card-poster-bg); 
+            padding: 20px; display: flex; align-items: center; justify-content: center; 
+            transition: background 0.3s;
+        }
+        .card img { max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+        
         .live-tag { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); padding: 3px 7px; border-radius: 5px; display: flex; align-items: center; gap: 4px; font-size: 0.55rem; font-weight: 800; color: #fff; }
         .dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1.2s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
         .card-info { padding: 10px; text-align: center; }
         .card-info h3 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
 
-        /* --- PLAYER OVERLAY --- */
-        #player-overlay { 
-            position: fixed; inset: 0; background: #000; z-index: 5000; 
-            display: none; flex-direction: column; 
-        }
-        
-        .video-wrapper { 
-            width: 100%; 
-            height: 70vh; /* PC height */
-            background: #000; 
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        @media (max-width: 768px) {
-            .video-wrapper { 
-                height: 42vh; /* Mobile height */
-            }
-        }
-
-        video { width: 100%; height: 100%; background: #000; display: block; object-fit: contain; }
+        /* --- Player --- */
+        #player-overlay { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; }
+        .video-wrapper { width: 100%; height: 70vh; background: #000; position: relative; flex-shrink: 0; }
+        @media (max-width: 768px) { .video-wrapper { height: 42vh; } }
+        video { width: 100%; height: 100%; object-fit: contain; }
 
         .controls-wrapper { 
             position: absolute; inset: 0; display: flex; flex-direction: column; 
@@ -113,57 +147,69 @@
         }
         .video-wrapper.show-controls .controls-wrapper { opacity: 1; }
 
-        /* Header Style */
-        .p-header { padding: 25px; display: flex; align-items: center; gap: 15px; }
-        .p-back-circle { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .p-red-pipe { width: 4px; height: 30px; background: var(--primary); border-radius: 2px; }
-        .p-name { font-weight: 800; font-size: 1.3rem; color: #fff; text-shadow: 0 2px 10px #000; }
+        .p-header { padding: 20px; display: flex; align-items: center; gap: 15px; }
+        .p-back-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .p-red-pipe { width: 4px; height: 28px; background: var(--primary); border-radius: 2px; }
+        .p-name { font-weight: 800; font-size: 1.3rem; color: #fff; }
+        @media (max-width: 768px) { .p-name { font-size: 0.95rem; } }
 
-        /* Bottom Area */
-        .p-bottom { padding: 25px; width: 100%; }
+        .p-bottom { padding: 20px; }
         .progress-area { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 15px; cursor: pointer; }
         .progress-bar { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; }
-        
         .p-controls-row { display: flex; justify-content: space-between; align-items: center; color: #fff; }
-        .p-group { display: flex; align-items: center; gap: 20px; }
-        .p-icon { cursor: pointer; }
-        .timer { font-size: 0.9rem; font-weight: 600; }
-
-        /* Quality Dropdown */
-        .quality-menu { position: absolute; bottom: 90px; right: 25px; background: #111; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: none; min-width: 150px; z-index: 30; }
+        
+        .quality-menu { position: absolute; bottom: 85px; right: 20px; background: #111; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: none; min-width: 140px; z-index: 30; }
         .q-item { padding: 12px 18px; font-size: 0.9rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .q-item.active { background: var(--primary); }
 
-        /* Suggestions */
-        .player-content-scroll {
-            flex-grow: 1;
-            overflow-y: auto;
-            background: var(--bg);
-            padding: 25px 5%;
-        }
-        .suggestion-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .player-content-scroll { flex-grow: 1; overflow-y: auto; background: var(--bg); padding: 25px 5%; }
+        .suggestion-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        /* --- Nav --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: var(--bg); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); cursor: pointer; font-size: 0.7rem; font-weight: 800; gap: 4px; }
         .nav-item.active { color: var(--primary); }
 
-        #importModal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 6000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        
-        .spinner { width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body id="body-main">
 
+    <!-- Sidebar & Overlay -->
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar(false)"></div>
+    <div id="sidebar">
+        <div class="sidebar-logo">
+            <div class="brand">
+                <i data-lucide="tv"></i>
+                <span>StreamX</span>
+            </div>
+        </div>
+        <div class="about-box">
+            <h4>About Project</h4>
+            <p>StreamX is a high-performance streaming engine built for speed and cinematic clarity. Developed with a vision to provide a seamless premium viewing experience on all devices.</p>
+            <div class="dev-tag"><i data-lucide="award" size="18"></i> Developer: Yash Nemade</div>
+        </div>
+        <div style="margin-top: 40px; color: var(--text-sec); font-size: 0.75rem; font-weight: 600; opacity: 0.5;">Version 2.2.0 Stable Build</div>
+    </div>
+
     <header>
-        <div class="brand" onclick="loadBaseM3U()">
-            <i data-lucide="tv" size="30"></i>
-            <span>EliteTV</span>
+        <div class="header-left">
+            <div class="hamburger" onclick="toggleSidebar(true)">
+                <i data-lucide="menu"></i>
+            </div>
+            <div class="brand" onclick="loadBaseM3U()">
+                <i data-lucide="tv"></i>
+                <span>StreamX</span>
+            </div>
+        </div>
+
+        <div class="header-center-search">
+            <i data-lucide="search" size="18" color="var(--text-sec)"></i>
+            <input type="text" id="laptop-search" placeholder="Search for channels..." oninput="handleSearch(this)">
         </div>
         
         <div class="header-right">
-            <div class="icon-btn" onclick="toggleSearch(true)">
+            <div class="icon-btn search-icon-mobile" onclick="toggleMobileSearch(true)">
                 <i data-lucide="search" size="20"></i>
             </div>
             <div class="icon-btn" onclick="toggleTheme()">
@@ -172,9 +218,9 @@
         </div>
 
         <div id="search-overlay">
-            <i data-lucide="search" size="20" color="var(--text-sec)"></i>
-            <input type="text" id="search-input" placeholder="Search channels..." oninput="handleSearch()">
-            <i data-lucide="x" size="24" style="cursor:pointer" onclick="toggleSearch(false)"></i>
+            <i data-lucide="search" size="20"></i>
+            <input type="text" id="mobile-search-input" placeholder="Search channels..." oninput="handleSearch(this)">
+            <i data-lucide="x" size="24" style="cursor:pointer" onclick="toggleMobileSearch(false)"></i>
         </div>
     </header>
 
@@ -208,14 +254,14 @@
                         <div class="progress-bar" id="p-bar"></div>
                     </div>
                     <div class="p-controls-row">
-                        <div class="p-group">
-                            <i data-lucide="play" id="play-btn" class="p-icon" onclick="togglePlay()"></i>
-                            <i data-lucide="volume-2" id="mute-btn" class="p-icon" onclick="toggleMute()"></i>
-                            <span class="timer" id="time-display">00:00 / 00:00</span>
+                        <div style="display:flex; align-items:center; gap:15px;">
+                            <i data-lucide="play" id="play-btn" style="cursor:pointer" onclick="togglePlay()"></i>
+                            <i data-lucide="volume-2" id="mute-btn" style="cursor:pointer" onclick="toggleMute()"></i>
+                            <span id="time-display" style="font-size: 0.85rem; font-weight:600; color:white;">00:00 / 00:00</span>
                         </div>
-                        <div class="p-group">
-                            <i data-lucide="settings" class="p-icon" onclick="toggleSettings()"></i>
-                            <i data-lucide="maximize" class="p-icon" onclick="toggleFullScreen()"></i>
+                        <div style="display:flex; align-items:center; gap:20px;">
+                            <i data-lucide="settings" style="cursor:pointer" onclick="toggleSettings()"></i>
+                            <i data-lucide="maximize" style="cursor:pointer" onclick="toggleFullScreen()"></i>
                         </div>
                     </div>
                 </div>
@@ -229,22 +275,21 @@
         </div>
     </div>
 
-    <!-- Bottom Nav -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="loadBaseM3U()"><i data-lucide="home"></i><span>HOME</span></div>
         <div class="nav-item" onclick="toggleModal(true)"><i data-lucide="plus-circle"></i><span>IMPORT</span></div>
     </div>
 
-    <div id="importModal">
+    <div id="importModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:6000; display:none; align-items:center; justify-content:center; padding:20px;">
         <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:400px; padding:2.5rem; border-radius:32px; text-align:center;">
-            <h2 style="font-weight: 800; margin-bottom: 20px;">Import M3U</h2>
-            <input type="text" id="m3uUrl" placeholder="Enter URL..." style="width:100%; padding:14px; border-radius:12px; background:var(--bg); border:1px solid var(--border); color:white; margin-bottom:15px; outline:none;">
+            <h2 style="font-weight: 800; margin-bottom: 20px;">Import Playlist</h2>
+            <input type="text" id="m3uUrl" placeholder="Paste URL..." style="width:100%; padding:14px; border-radius:12px; background:var(--bg); border:1px solid var(--border); color:white; margin-bottom:15px; outline:none;">
             <div onclick="document.getElementById('fileInput').click()" style="border:2px dashed var(--border); padding:30px; border-radius:20px; margin-bottom:20px; cursor:pointer;">
                 <i data-lucide="upload-cloud" size="32"></i>
                 <p style="font-size: 0.85rem; margin-top:10px; font-weight: 700;">Upload Local File</p>
             </div>
             <input type="file" id="fileInput" style="display:none" accept=".m3u" onchange="loadFile(event)">
-            <button onclick="loadUrl()" style="width:100%; padding:16px; border-radius:16px; background:var(--primary); color:white; border:none; font-weight:800; cursor:pointer;">LOAD PLAYLIST</button>
+            <button onclick="loadUrl()" style="width:100%; padding:16px; border-radius:16px; background:var(--primary); color:white; border:none; font-weight:800; cursor:pointer;">LOAD NETWORK</button>
             <p onclick="toggleModal(false)" style="margin-top:20px; color:var(--text-sec); cursor:pointer;">Close</p>
         </div>
     </div>
@@ -258,10 +303,17 @@
 
         lucide.createIcons();
 
-        function toggleSearch(show) {
+        function toggleSidebar(show) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            if(show) { sidebar.classList.add('open'); overlay.style.display = 'block'; }
+            else { sidebar.classList.remove('open'); overlay.style.display = 'none'; }
+        }
+
+        function toggleMobileSearch(show) {
             const overlay = document.getElementById('search-overlay');
             overlay.style.display = show ? 'flex' : 'none';
-            if(show) document.getElementById('search-input').focus();
+            if(show) document.getElementById('mobile-search-input').focus();
         }
 
         let controlTimer;
@@ -308,7 +360,7 @@
 
         function renderGrid(list, target, isMini = false) {
             const grid = document.getElementById(target);
-            grid.innerHTML = list.slice(0, isMini ? 12 : 400).map(ch => `
+            grid.innerHTML = list.slice(0, isMini ? 12 : 300).map(ch => `
                 <div class="card" onclick="playStream('${ch.url}', '${ch.name.replace(/'/g, "\\'")}', '${ch.group}')">
                     <div class="live-tag"><div class="dot"></div> LIVE</div>
                     <div class="poster-box"><img src="${ch.logo}" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'"></div>
@@ -345,7 +397,7 @@
             } else { video.src = url; video.play(); }
 
             const suggestions = allChannels.filter(c => c.group === group && c.name !== name);
-            document.getElementById('s-title').innerHTML = `<i data-lucide="sparkles" color="var(--primary)"></i> More from ${group}`;
+            document.getElementById('s-title').innerHTML = `<i data-lucide="sparkles" color="var(--primary)"></i> Similar in ${group}`;
             renderGrid(suggestions, 'suggestion-grid', true);
             lucide.createIcons();
             document.querySelector('.player-content-scroll').scrollTo(0,0);
@@ -355,15 +407,11 @@
         function setupQuality() {
             const menu = document.getElementById('quality-menu');
             const uniqueHeights = new Set();
-            const sortedLevels = hls.levels
-                .map((l, i) => ({...l, index: i}))
-                .sort((a, b) => b.height - a.height);
+            const sortedLevels = hls.levels.map((l, i) => ({...l, index: i})).sort((a, b) => b.height - a.height);
             
             menu.innerHTML = sortedLevels.map(l => {
-                // Filter duplicates
                 if (uniqueHeights.has(l.height)) return "";
                 uniqueHeights.add(l.height);
-
                 let label = l.height;
                 if(l.height >= 1080) label = "1080 FHD";
                 else if(l.height >= 720) label = "720 HD";
@@ -415,8 +463,8 @@
             reader.readAsText(e.target.files[0]);
         }
 
-        function handleSearch() {
-            const q = document.getElementById('search-input').value.toLowerCase();
+        function handleSearch(inputEl) {
+            const q = inputEl.value.toLowerCase();
             renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)), 'channel-grid');
         }
 
