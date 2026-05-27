@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteTV | Ultra Streaming</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --accent: #ff4757;
+            --bg: #030712;
+            --card-bg: #111827;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(3, 7, 18, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 1rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand {
+            font-size: 1.8rem; font-weight: 800;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+
+        .search-bar {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            display: flex; align-items: center; gap: 10px;
+            transition: 0.3s;
+        }
+        .search-bar input { background: transparent; border: none; color: white; outline: none; width: 150px; }
+        .search-bar:focus-within input { width: 250px; }
+
+        .btn {
+            padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer;
+            font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .btn-import { background: var(--primary); color: white; }
+        .btn-import:hover { transform: scale(1.05); }
+
+        /* Chips */
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 1.5rem 5%; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .chip {
+            padding: 8px 20px; background: var(--glass); border: 1px solid var(--border);
+            border-radius: 50px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-size: 0.85rem;
+        }
+        .chip.active { background: var(--primary); border-color: var(--primary); }
+
+        /* Grid */
+        .grid {
+            display: grid; padding: 0 5% 50px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border);
+            overflow: hidden; cursor: pointer; transition: 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .card .poster { width: 100%; aspect-ratio: 16/10; object-fit: contain; background: #000; padding: 8px; }
+        .card-info { padding: 10px; text-align: center; }
+        .card-info h3 { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Unified Import Modal */
+        #import-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-content {
+            background: var(--card-bg); border: 1px solid var(--border);
+            width: 100%; max-width: 450px; padding: 2rem; border-radius: 20px;
+        }
+
+        /* Player UI - Redesigned for Suggestions */
+        #player-overlay {
+            position: fixed; inset: 0; background: var(--bg); z-index: 2000;
+            display: none; flex-direction: column; overflow-y: auto;
+        }
+        .video-container {
+            width: 100%; position: sticky; top: 0; background: #000; z-index: 10;
+        }
+        video { width: 100%; aspect-ratio: 16/9; display: block; }
+        
+        .player-info { padding: 20px 5%; border-bottom: 1px solid var(--border); }
+        .suggestions-section { padding: 20px 5%; }
+
+        .hidden { display: none !important; }
+        .spinner { border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand" onclick="location.reload()"><i data-lucide="tv"></i> EliteTV</div>
+        <div class="header-actions">
+            <div class="search-bar">
+                <i data-lucide="search" size="16"></i>
+                <input type="text" id="search" placeholder="Search...">
+            </div>
+            <button class="btn btn-import" onclick="openImport()">
+                <i data-lucide="plus-circle"></i> Import
+            </button>
+        </div>
+    </header>
+
+    <div id="categories" class="categories"></div>
+    <div id="channel-grid" class="grid"></div>
+
+    <!-- Unified Import Modal -->
+    <div id="import-modal">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 1.5rem;">
+                <h3>Add Content</h3>
+                <button onclick="closeImport()" style="background:none; border:none; color:white;"><i data-lucide="x"></i></button>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label style="font-size: 0.8rem; color: #888;">Playlist URL</label>
+                <input type="text" id="m3uUrl" placeholder="https://..." 
+                       style="width: 100%; padding: 12px; border-radius: 10px; background: #000; border: 1px solid var(--border); color: white; margin-top: 5px;">
+            </div>
+            <button class="btn btn-import" style="width: 100%; justify-content: center;" onclick="loadFromUrl()">Load Link</button>
+            <div style="text-align: center; margin: 1rem 0; font-size: 0.8rem; color: #444;">OR</div>
+            <button class="btn" style="width: 100%; background: var(--glass); color: white; border: 1px solid var(--border); justify-content: center;" 
+                    onclick="document.getElementById('fileInput').click()">
+                <i data-lucide="upload"></i> Upload File
+            </button>
+            <input type="file" id="fileInput" class="hidden" accept=".m3u" onchange="loadFromFile(event)">
+        </div>
+    </div>
+
+    <!-- Player Overlay with Suggestions -->
+    <div id="player-overlay">
+        <div class="video-container">
+            <video id="video" controls autoplay playsinline></video>
+            <button onclick="closePlayer()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; color: white; border-radius: 50%; padding: 8px;">
+                <i data-lucide="chevron-down"></i>
+            </button>
+        </div>
+        <div class="player-info">
+            <h1 id="playing-now">Channel Name</h1>
+            <p id="playing-group" style="color: var(--primary); font-size: 0.9rem; font-weight: 600; margin-top: 4px;"></p>
+        </div>
+        <div class="suggestions-section">
+            <h3 style="margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="sparkles" size="18" color="#6366f1"></i> Similar Channels
+            </h3>
+            <div id="suggestion-grid" class="grid" style="padding: 0;"></div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_URL = 'https://yashlivetv.fun/app/tsjio_playlist.m3u';
+        const PROXY = 'https://api.allorigins.win/raw?url=';
+        let allChannels = [];
+        let hls = null;
+
+        lucide.createIcons();
+
+        // 1. Inbuilt Loader (Fast)
+        window.onload = () => {
+            fetchPlaylist(DEFAULT_URL);
+        };
+
+        async function fetchPlaylist(url) {
+            try {
+                const response = await fetch(PROXY + encodeURIComponent(url));
+                const data = await response.text();
+                parseM3U(data);
+            } catch (error) {
+                console.error("Fetch failed");
+            }
+        }
+
+        // 2. Parser Logic
+        function parseM3U(content) {
+            const regex = /#EXTINF:(?:.*?tvg-logo="([^"]*)")?(?:.*?group-title="([^"]*)")?.*?,(.*?)\n(http.*?)(?:\n|$)/g;
+            const channels = [];
+            let match;
+            while ((match = regex.exec(content)) !== null) {
+                channels.push({
+                    logo: match[1] || '',
+                    group: match[2] || 'General',
+                    name: match[3].trim(),
+                    url: match[4].trim()
+                });
+            }
+            allChannels = channels;
+            renderCategories();
+            renderGrid(allChannels, 'channel-grid');
+        }
+
+        // 3. UI Grid Rendering
+        function renderGrid(list, targetId, isSuggestion = false) {
+            const grid = document.getElementById(targetId);
+            grid.innerHTML = '';
+            const items = isSuggestion ? list.slice(0, 15) : list;
+            
+            items.forEach(ch => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <img class="poster" src="${ch.logo}" loading="lazy" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'">
+                    <div class="card-info"><h3>${ch.name}</h3></div>
+                `;
+                div.onclick = () => {
+                    playStream(ch);
+                    if(isSuggestion) document.getElementById('player-overlay').scrollTo({top: 0, behavior: 'smooth'});
+                };
+                grid.appendChild(div);
+            });
+        }
+
+        function renderCategories() {
+            const cats = ['All', ...new Set(allChannels.map(c => c.group))];
+            const container = document.getElementById('categories');
+            container.innerHTML = '';
+            cats.forEach(cat => {
+                const chip = document.createElement('div');
+                chip.className = 'chip' + (cat === 'All' ? ' active' : '');
+                chip.innerText = cat;
+                chip.onclick = () => {
+                    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    const filtered = cat === 'All' ? allChannels : allChannels.filter(c => c.group === cat);
+                    renderGrid(filtered, 'channel-grid');
+                };
+                container.appendChild(chip);
+            });
+        }
+
+        // 4. Smart Suggestions Logic
+        function renderSuggestions(currentCh) {
+            const suggested = allChannels.filter(ch => ch.group === currentCh.group && ch.name !== currentCh.name);
+            renderGrid(suggested, 'suggestion-grid', true);
+        }
+
+        // 5. Player Actions
+        function playStream(ch) {
+            const video = document.getElementById('video');
+            document.getElementById('player-overlay').style.display = 'flex';
+            document.getElementById('playing-now').innerText = ch.name;
+            document.getElementById('playing-group').innerText = ch.group;
+
+            if (hls) hls.destroy();
+
+            if (Hls.isSupported()) {
+                hls = new Hls();
+                hls.loadSource(ch.url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = ch.url;
+            }
+            renderSuggestions(ch);
+        }
+
+        function closePlayer() {
+            const video = document.getElementById('video');
+            video.pause();
+            document.getElementById('player-overlay').style.display = 'none';
+        }
+
+        // 6. Modal & Search
+        function openImport() { document.getElementById('import-modal').style.display = 'flex'; }
+        function closeImport() { document.getElementById('import-modal').style.display = 'none'; }
+
+        function loadFromUrl() {
+            const url = document.getElementById('m3uUrl').value;
+            if(url) { fetchPlaylist(url); closeImport(); }
+        }
+
+        function loadFromFile(e) {
+            const reader = new FileReader();
+            reader.onload = (event) => { parseM3U(event.target.result); closeImport(); };
+            reader.readAsText(e.target.files[0]);
+        }
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)), 'channel-grid');
+        });
+    </script>
+</body>
+</html>
