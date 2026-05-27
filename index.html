@@ -25,7 +25,6 @@
             overflow-x: hidden;
         }
 
-        /* Header */
         header {
             position: sticky; top: 0; z-index: 1000;
             background: rgba(3, 7, 18, 0.8);
@@ -52,7 +51,7 @@
             display: flex; align-items: center; gap: 10px;
             transition: 0.3s;
         }
-        .search-bar input { background: transparent; border: none; color: white; outline: none; width: 150px; }
+        .search-bar input { background: transparent; border: none; color: white; outline: none; width: 120px; }
         .search-bar:focus-within input { width: 250px; }
 
         .btn {
@@ -60,18 +59,15 @@
             font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s;
         }
         .btn-import { background: var(--primary); color: white; }
-        .btn-import:hover { transform: scale(1.05); }
 
-        /* Chips */
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 1.5rem 5%; scrollbar-width: none; }
         .categories::-webkit-scrollbar { display: none; }
         .chip {
             padding: 8px 20px; background: var(--glass); border: 1px solid var(--border);
             border-radius: 50px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-size: 0.85rem;
         }
-        .chip.active { background: var(--primary); border-color: var(--primary); }
+        .chip.active { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
 
-        /* Grid */
         .grid {
             display: grid; padding: 0 5% 50px;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -87,7 +83,6 @@
         .card-info { padding: 10px; text-align: center; }
         .card-info h3 { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Unified Import Modal */
         #import-modal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
             z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
@@ -97,22 +92,32 @@
             width: 100%; max-width: 450px; padding: 2rem; border-radius: 20px;
         }
 
-        /* Player UI - Redesigned for Suggestions */
         #player-overlay {
             position: fixed; inset: 0; background: var(--bg); z-index: 2000;
             display: none; flex-direction: column; overflow-y: auto;
         }
-        .video-container {
-            width: 100%; position: sticky; top: 0; background: #000; z-index: 10;
-        }
+        .video-container { width: 100%; position: sticky; top: 0; background: #000; z-index: 10; }
         video { width: 100%; aspect-ratio: 16/9; display: block; }
         
+        #video-loader {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.7);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5;
+        }
+        .spinner-v { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .quality-btn { position: absolute; bottom: 15px; right: 60px; z-index: 20; background: rgba(0,0,0,0.5); border: none; color: white; padding: 8px; border-radius: 50%; cursor: pointer; }
+        #settings-menu {
+            position: absolute; bottom: 60px; right: 20px; background: #111; border: 1px solid var(--border);
+            border-radius: 12px; padding: 10px; display: none; z-index: 30; width: 180px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .setting-item { padding: 8px 12px; font-size: 0.8rem; cursor: pointer; border-radius: 6px; }
+        .setting-item:hover { background: var(--primary); }
+        .setting-title { font-size: 0.7rem; color: #555; text-transform: uppercase; font-weight: 800; margin: 8px 0 4px 5px; }
+
         .player-info { padding: 20px 5%; border-bottom: 1px solid var(--border); }
         .suggestions-section { padding: 20px 5%; }
-
         .hidden { display: none !important; }
-        .spinner { border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -133,20 +138,16 @@
     <div id="categories" class="categories"></div>
     <div id="channel-grid" class="grid"></div>
 
-    <!-- Unified Import Modal -->
     <div id="import-modal">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; margin-bottom: 1.5rem;">
                 <h3>Add Content</h3>
                 <button onclick="closeImport()" style="background:none; border:none; color:white;"><i data-lucide="x"></i></button>
             </div>
-            <div style="margin-bottom: 1rem;">
-                <label style="font-size: 0.8rem; color: #888;">Playlist URL</label>
-                <input type="text" id="m3uUrl" placeholder="https://..." 
-                       style="width: 100%; padding: 12px; border-radius: 10px; background: #000; border: 1px solid var(--border); color: white; margin-top: 5px;">
-            </div>
+            <input type="text" id="m3uUrl" placeholder="Enter M3U URL..." 
+                   style="width: 100%; padding: 12px; border-radius: 10px; background: #000; border: 1px solid var(--border); color: white; margin-bottom: 10px; outline:none;">
             <button class="btn btn-import" style="width: 100%; justify-content: center;" onclick="loadFromUrl()">Load Link</button>
-            <div style="text-align: center; margin: 1rem 0; font-size: 0.8rem; color: #444;">OR</div>
+            <div style="text-align: center; margin: 10px; color: #444; font-size: 0.8rem;">OR</div>
             <button class="btn" style="width: 100%; background: var(--glass); color: white; border: 1px solid var(--border); justify-content: center;" 
                     onclick="document.getElementById('fileInput').click()">
                 <i data-lucide="upload"></i> Upload File
@@ -155,17 +156,19 @@
         </div>
     </div>
 
-    <!-- Player Overlay with Suggestions -->
     <div id="player-overlay">
         <div class="video-container">
-            <video id="video" controls autoplay playsinline></video>
-            <button onclick="closePlayer()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; color: white; border-radius: 50%; padding: 8px;">
-                <i data-lucide="chevron-down"></i>
+            <div id="video-loader"><div class="spinner-v"></div><p style="margin-top:10px; font-size: 0.7rem;">BUFFERING...</p></div>
+            <video id="video" playsinline></video>
+            <button onclick="closePlayer()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; color: white; border-radius: 50%; padding: 8px; z-index: 20;">
+                <i data-lucide="x"></i>
             </button>
+            <button class="quality-btn" onclick="toggleSettings()"><i data-lucide="settings"></i></button>
+            <div id="settings-menu"></div>
         </div>
         <div class="player-info">
             <h1 id="playing-now">Channel Name</h1>
-            <p id="playing-group" style="color: var(--primary); font-size: 0.9rem; font-weight: 600; margin-top: 4px;"></p>
+            <p id="playing-group" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; margin-top: 5px;"></p>
         </div>
         <div class="suggestions-section">
             <h3 style="margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
@@ -176,39 +179,55 @@
     </div>
 
     <script>
+        // ⭐ YAHAN APNA WORKER URL DALO
+        const CF_WORKER = 'https://yashiptvplaylist.bgmihackerr12.workers.dev//?url='; 
         const DEFAULT_URL = 'https://yashlivetv.fun/app/tsjio_playlist.m3u';
-        const PROXY = 'https://api.allorigins.win/raw?url=';
+        
         let allChannels = [];
         let hls = null;
 
         lucide.createIcons();
 
-        // 1. Inbuilt Loader (Fast)
-        window.onload = () => {
-            fetchPlaylist(DEFAULT_URL);
-        };
+        window.onload = () => fetchPlaylist(DEFAULT_URL);
 
         async function fetchPlaylist(url) {
             try {
-                const response = await fetch(PROXY + encodeURIComponent(url));
-                const data = await response.text();
+                // Cloudflare Worker se fetch ho raha hai
+                const response = await fetch(CF_WORKER + encodeURIComponent(url));
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let partialData = '';
+
+                while(true) {
+                    const {done, value} = await reader.read();
+                    if(done) break;
+                    partialData += decoder.decode(value, {stream: true});
+                    
+                    // Progressive rendering for large files
+                    if(partialData.split('#EXTINF').length > 500 && allChannels.length === 0) {
+                        parseM3U(partialData);
+                    }
+                }
+                parseM3U(partialData); 
+            } catch (error) { 
+                console.error("Fetch failed through worker.");
+                // Fallback direct if worker fails
+                const res = await fetch(url);
+                const data = await res.text();
                 parseM3U(data);
-            } catch (error) {
-                console.error("Fetch failed");
             }
         }
 
-        // 2. Parser Logic
         function parseM3U(content) {
             const regex = /#EXTINF:(?:.*?tvg-logo="([^"]*)")?(?:.*?group-title="([^"]*)")?.*?,(.*?)\n(http.*?)(?:\n|$)/g;
             const channels = [];
             let match;
             while ((match = regex.exec(content)) !== null) {
-                channels.push({
-                    logo: match[1] || '',
-                    group: match[2] || 'General',
-                    name: match[3].trim(),
-                    url: match[4].trim()
+                channels.push({ 
+                    logo: match[1] || '', 
+                    group: match[2] || 'General', 
+                    name: match[3].trim(), 
+                    url: match[4].trim() 
                 });
             }
             allChannels = channels;
@@ -216,22 +235,17 @@
             renderGrid(allChannels, 'channel-grid');
         }
 
-        // 3. UI Grid Rendering
-        function renderGrid(list, targetId, isSuggestion = false) {
+        function renderGrid(list, targetId, isSug = false) {
             const grid = document.getElementById(targetId);
             grid.innerHTML = '';
-            const items = isSuggestion ? list.slice(0, 15) : list;
-            
+            const items = isSug ? list.slice(0, 15) : list;
             items.forEach(ch => {
                 const div = document.createElement('div');
                 div.className = 'card';
-                div.innerHTML = `
-                    <img class="poster" src="${ch.logo}" loading="lazy" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'">
-                    <div class="card-info"><h3>${ch.name}</h3></div>
-                `;
+                div.innerHTML = `<img class="poster" src="${ch.logo}" loading="lazy" onerror="this.src='https://img.icons8.com/fluency/96/monitor.png'"><div class="card-info"><h3>${ch.name}</h3></div>`;
                 div.onclick = () => {
                     playStream(ch);
-                    if(isSuggestion) document.getElementById('player-overlay').scrollTo({top: 0, behavior: 'smooth'});
+                    if(isSug) document.getElementById('player-overlay').scrollTo({top: 0, behavior: 'smooth'});
                 };
                 grid.appendChild(div);
             });
@@ -248,25 +262,19 @@
                 chip.onclick = () => {
                     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
                     chip.classList.add('active');
-                    const filtered = cat === 'All' ? allChannels : allChannels.filter(c => c.group === cat);
-                    renderGrid(filtered, 'channel-grid');
+                    renderGrid(cat === 'All' ? allChannels : allChannels.filter(c => c.group === cat), 'channel-grid');
                 };
                 container.appendChild(chip);
             });
         }
 
-        // 4. Smart Suggestions Logic
-        function renderSuggestions(currentCh) {
-            const suggested = allChannels.filter(ch => ch.group === currentCh.group && ch.name !== currentCh.name);
-            renderGrid(suggested, 'suggestion-grid', true);
-        }
-
-        // 5. Player Actions
         function playStream(ch) {
             const video = document.getElementById('video');
+            const loader = document.getElementById('video-loader');
             document.getElementById('player-overlay').style.display = 'flex';
             document.getElementById('playing-now').innerText = ch.name;
             document.getElementById('playing-group').innerText = ch.group;
+            loader.style.display = 'flex';
 
             if (hls) hls.destroy();
 
@@ -274,34 +282,60 @@
                 hls = new Hls();
                 hls.loadSource(ch.url);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play();
+                    setupQualityMenu();
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = ch.url;
             }
-            renderSuggestions(ch);
+
+            video.onplaying = () => loader.style.display = 'none';
+            video.onwaiting = () => loader.style.display = 'flex';
+            
+            const suggested = allChannels.filter(c => c.group === ch.group && c.name !== ch.name);
+            renderGrid(suggested, 'suggestion-grid', true);
         }
 
-        function closePlayer() {
-            const video = document.getElementById('video');
-            video.pause();
-            document.getElementById('player-overlay').style.display = 'none';
+        function setupQualityMenu() {
+            const menu = document.getElementById('settings-menu');
+            menu.innerHTML = '<div class="setting-title">Quality</div>';
+            hls.levels.forEach((level, index) => {
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.innerText = level.height + 'p';
+                div.onclick = () => { hls.currentLevel = index; toggleSettings(); };
+                menu.appendChild(div);
+            });
+            if(hls.audioTracks.length > 1) {
+                menu.innerHTML += '<div class="setting-title">Audio</div>';
+                hls.audioTracks.forEach((track, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'setting-item';
+                    div.innerText = track.name || `Track ${index+1}`;
+                    div.onclick = () => { hls.audioTrack = index; toggleSettings(); };
+                    menu.appendChild(div);
+                });
+            }
         }
 
-        // 6. Modal & Search
+        function toggleSettings() {
+            const menu = document.getElementById('settings-menu');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function closePlayer() { document.getElementById('video').pause(); document.getElementById('player-overlay').style.display = 'none'; }
         function openImport() { document.getElementById('import-modal').style.display = 'flex'; }
         function closeImport() { document.getElementById('import-modal').style.display = 'none'; }
-
         function loadFromUrl() {
             const url = document.getElementById('m3uUrl').value;
             if(url) { fetchPlaylist(url); closeImport(); }
         }
-
         function loadFromFile(e) {
             const reader = new FileReader();
             reader.onload = (event) => { parseM3U(event.target.result); closeImport(); };
             reader.readAsText(e.target.files[0]);
         }
-
         document.getElementById('search').addEventListener('input', (e) => {
             const q = e.target.value.toLowerCase();
             renderGrid(allChannels.filter(c => c.name.toLowerCase().includes(q)), 'channel-grid');
