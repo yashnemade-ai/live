@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StreamX | TV</title>
+    <title>StreamX-TV</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -31,16 +31,17 @@
             --text-sec: #64748b;
             --border: rgba(0, 0, 0, 0.1);
             --glass: rgba(0, 0, 0, 0.05);
-            --logo-shadow: rgba(0, 0, 0, 0.15);
+            --logo-shadow: rgba(0, 0, 0, 0.2);
             --card-shadow: 0 10px 30px rgba(0,0,0,0.5);
             --live-bg: #ffffff;
             --card-poster-bg: #ffffff;
         }
 
-        /* --- Global --- */
+        /* --- Global Reset & Invisible Scrollbar --- */
         * { scrollbar-width: none; -ms-overflow-style: none; }
         *::-webkit-scrollbar { display: none; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
         body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; transition: 0.3s ease; }
 
         /* --- Header --- */
@@ -55,18 +56,22 @@
         .brand i { color: var(--text-main); filter: drop-shadow(0 2px 4px var(--logo-shadow)); }
         .brand span { 
             background: linear-gradient(to right, var(--text-main), var(--primary)); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
             filter: drop-shadow(0 2px 6px var(--logo-shadow));
         }
 
         .hamburger { cursor: pointer; display: flex; align-items: center; padding: 8px; border-radius: 10px; transition: 0.2s; }
         .hamburger:hover { background: var(--glass); }
 
-        .header-center-search { flex: 0 1 450px; background: var(--glass); border: 1px solid var(--border); padding: 8px 18px; border-radius: 50px; display: flex; align-items: center; gap: 10px; }
+        .header-center-search {
+            flex: 0 1 450px; background: var(--glass); border: 1px solid var(--border); 
+            padding: 8px 18px; border-radius: 50px; display: flex; align-items: center; gap: 10px;
+        }
         .header-center-search input { background: transparent; border: none; color: var(--text-main); outline: none; width: 100%; font-size: 0.95rem; }
 
         .header-right { display: flex; align-items: center; gap: 10px; }
-        .icon-btn { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .icon-btn { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .search-icon-mobile { display: none; }
 
         #search-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: none; align-items: center; padding: 0 5%; z-index: 1100; gap: 15px; }
@@ -81,47 +86,65 @@
         .about-box { background: var(--bg); padding: 22px; border-radius: 20px; border: 1px solid var(--border); margin-top: 20px; }
         .dev-tag { margin-top: 20px; font-weight: 800; font-size: 0.9rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
 
-        /* --- Cards --- */
+        /* --- Categories --- */
         .cat-nav { position: sticky; top: 70px; z-index: 900; background: var(--bg); padding: 12px 0; border-bottom: 1px solid var(--border); }
         .categories { display: flex; gap: 12px; overflow-x: auto; padding: 0 5%; }
-        .chip { padding: 10px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.8rem; font-weight: 700; color: var(--text-sec); }
+        .chip { padding: 10px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.8rem; font-weight: 700; color: var(--text-sec); transition: 0.3s; }
         .chip.active { background: var(--primary); color: white; border: none; }
 
+        /* --- Grid & Cards --- */
         .grid { display: grid; padding: 1rem 5% 100px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-        .card { background: var(--surface); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: var(--card-shadow); }
+        .card { 
+            background: var(--surface); border-radius: 24px; border: 1px solid var(--border); 
+            overflow: hidden; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative; box-shadow: var(--card-shadow);
+        }
         .card:hover { transform: translateY(-8px) scale(1.03); border: 2px solid var(--primary); box-shadow: 0 0 20px var(--primary); }
         .card .poster-box { width: 100%; aspect-ratio: 1/1; background: var(--card-poster-bg); padding: 25px; display: flex; align-items: center; justify-content: center; }
         .card img { max-width: 90%; max-height: 90%; object-fit: contain; }
-        .live-tag { position: absolute; top: 12px; right: 12px; background: var(--live-bg); padding: 4px 10px; border-radius: 8px; display: flex; align-items: center; gap: 5px; font-size: 0.6rem; font-weight: 900; color: var(--text-main); border: 1px solid var(--border); }
-        .dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1s infinite; }
+        
+        .live-tag { 
+            position: absolute; top: 12px; right: 12px; background: var(--live-bg); 
+            padding: 4px 10px; border-radius: 8px; display: flex; align-items: center; gap: 5px; 
+            font-size: 0.6rem; font-weight: 900; color: var(--text-main); border: 1px solid var(--border); 
+        }
+        .dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1s infinite; box-shadow: 0 0 8px var(--primary); }
         @keyframes blink { 50% { opacity: 0.3; } }
         .card-info { padding: 12px; text-align: center; }
         .card-info h3 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* --- PLAYER --- */
+        /* --- PLAYER UI --- */
         #player-overlay { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; flex-direction: column; overflow-y: auto; }
         .video-wrapper { width: 100%; height: 68vh; background: #000; position: relative; flex-shrink: 0; }
         @media (max-width: 768px) { .video-wrapper { height: 40vh; } }
         video { width: 100%; height: 100%; object-fit: contain; }
-        .controls-wrapper { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; opacity: 0; background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.9) 100%); z-index: 20; }
+
+        .controls-wrapper { 
+            position: absolute; inset: 0; display: flex; flex-direction: column; 
+            justify-content: space-between; transition: 0.4s; opacity: 0; 
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.9) 100%);
+            z-index: 20;
+        }
         .video-wrapper.show-controls .controls-wrapper { opacity: 1; }
+
+        .center-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: none; border: none; cursor: pointer; transition: 0.3s; z-index: 25; }
+        .center-btn:hover { transform: translate(-50%, -50%) scale(1.2); }
 
         .p-header { padding: 20px; display: flex; align-items: center; gap: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
         .p-back-circle { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
         .p-red-pipe { width: 4px; height: 28px; background: var(--primary); border-radius: 2px; }
         .p-name { font-weight: 800; font-size: 1.4rem; color: #fff; text-shadow: 0 2px 10px #000; }
-        @media (max-width: 768px) { .p-name { font-size: 1rem; } }
-
-        .center-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: none; border: none; cursor: pointer; transition: 0.3s; z-index: 25; }
-        .center-btn:hover { transform: translate(-50%, -50%) scale(1.2); }
+        @media (max-width: 768px) { .p-name { font-size: 0.95rem; } }
 
         .p-bottom { padding: 25px 30px 40px; background: linear-gradient(to top, rgba(0,0,0,1), transparent); }
-        .progress-area { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px; cursor: pointer; }
-        .progress-bar { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; transition: 0.1s linear; }
+        
+        /* Progress Bar (Clickable) */
+        .progress-area { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 20px; cursor: pointer; position: relative; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; transition: 0.1s linear; pointer-events: none; }
+        
         .p-controls-row { display: flex; justify-content: space-between; align-items: center; color: #fff; }
         .p-live-indicator { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 0.9rem; color: white; margin-left: 10px; }
 
-        /* Settings Menu Update for Audio */
         .quality-menu { position: absolute; bottom: 100px; right: 30px; background: #0d1117; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: none; min-width: 180px; z-index: 30; padding: 10px 0; }
         .q-title { padding: 10px 20px; font-size: 0.7rem; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; }
         .q-item { padding: 12px 20px; font-size: 0.9rem; font-weight: 700; cursor: pointer; color: white; }
@@ -132,25 +155,15 @@
         .suggestion-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
         .sparkle-red { color: var(--primary); }
 
-        /* --- REQUEST: Upload Box Section --- */
+        /* Upload Container */
         .upload-container {
             border: 2px dashed var(--border);
-            padding: 30px;
-            border-radius: 20px;
-            margin: 20px 0;
-            cursor: pointer;
-            background: rgba(255,255,255,0.02);
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
+            padding: 30px; border-radius: 20px; margin: 20px 0; cursor: pointer;
+            background: rgba(255,255,255,0.02); transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
         .upload-container:hover { border-color: var(--primary); background: rgba(249, 13, 0, 0.03); }
-        .upload-container i { color: #fff; opacity: 0.8; }
-        .upload-container p { font-weight: 700; font-size: 0.95rem; color: #fff; }
 
-        /* Loader Overlay */
         #loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
         .loader-txt { font-weight: 800; font-size: 1.1rem; color: var(--primary); letter-spacing: 1px; }
 
@@ -170,7 +183,7 @@
     <div id="sidebar">
         <div class="brand"><i data-lucide="zap"></i><span>StreamX</span></div>
         <div class="about-box">
-            <p>StreamX is a premium OTT engine built for cinematic clarity. Designed by Yash Nemade.</p>
+            <p>StreamX is a premium OTT engine designed for a cinematic experience. Designed by Yash Nemade.</p>
             <div class="dev-tag"><i data-lucide="verified" size="18"></i> Developer: Yash Nemade</div>
         </div>
     </div>
@@ -210,6 +223,7 @@
                 </div>
                 <div class="center-btn" onclick="togglePlay()"><i data-lucide="play" id="center-play-icon" color="white" size="45"></i></div>
                 <div class="p-bottom">
+                    <!-- REQUEST: SEEK FEATURE -->
                     <div class="progress-area" id="p-container"><div class="progress-bar" id="p-bar"></div></div>
                     <div class="p-controls-row">
                         <div style="display:flex; align-items:center; gap:15px;">
@@ -240,12 +254,12 @@
 
     <div id="importModal" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:6000; display:none; align-items:center; justify-content:center; padding:20px;">
         <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:400px; padding:35px; border-radius:32px; text-align:center;">
-            <h2 style="font-weight: 800;">Import Playlist</h2>
-            <input type="text" id="m3uUrl" placeholder="Enter M3U URL..." style="width:100%; padding:15px; border-radius:12px; background:var(--bg); border:1px solid var(--border); color:white; margin:15px 0; outline:none;">
+            <h2 style="font-weight: 800; margin-bottom: 25px;">Import Playlist</h2>
+            <input type="text" id="m3uUrl" placeholder="Paste M3U URL..." style="width:100%; padding:15px; border-radius:12px; background:var(--bg); border:1px solid var(--border); color:white; margin-bottom:15px; outline:none;">
             
             <div class="upload-container" onclick="document.getElementById('fileInput').click()">
                 <i data-lucide="cloud-upload" size="30"></i>
-                <p>Upload M3U File</p>
+                <p>Upload Local File</p>
             </div>
             <input type="file" id="fileInput" style="display:none" accept=".m3u" onchange="loadFile(event)">
 
@@ -336,10 +350,20 @@
             showControls();
         }
 
+        // REQUEST: SEEK FEATURE
+        document.getElementById('p-container').addEventListener('click', function(e) {
+            if (video.duration && isFinite(video.duration)) {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+                const width = rect.width;
+                const percent = offsetX / width;
+                video.currentTime = percent * video.duration;
+            }
+        });
+
         function setupSettings() {
             const menu = document.getElementById('quality-menu');
             let html = '<div class="q-title">Quality</div>';
-            
             const unique = new Set();
             const sortedLevels = hls.levels.map((l, i) => ({...l, index: i})).sort((a, b) => b.height - a.height);
             
@@ -351,7 +375,6 @@
                 }
             });
 
-            // Audio Tracks Request
             if (hls.audioTracks && hls.audioTracks.length > 1) {
                 html += '<div class="q-title" style="margin-top:10px;">Audio Language</div>';
                 hls.audioTracks.forEach((track, id) => {
