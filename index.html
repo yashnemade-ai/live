@@ -29,6 +29,15 @@
             --glass: rgba(0, 0, 0, 0.05);
         }
 
+        /* --- Hide Scrollbars (Invisible but Functional) --- */
+        * { 
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+        *::-webkit-scrollbar { 
+            display: none; /* Chrome, Safari, Opera */
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; transition: 0.3s ease; }
 
@@ -58,7 +67,7 @@
 
         /* --- Categories --- */
         .cat-nav { position: sticky; top: 70px; z-index: 900; background: var(--bg); padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 0 5%; scrollbar-width: none; }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 0 5%; }
         .chip { padding: 10px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; font-weight: 700; color: var(--text-sec); }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
@@ -74,7 +83,7 @@
         .card-info { padding: 10px; text-align: center; }
         .card-info h3 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
 
-        /* --- PLAYER OVERLAY RE-ENGINEERED --- */
+        /* --- PLAYER OVERLAY --- */
         #player-overlay { 
             position: fixed; inset: 0; background: #000; z-index: 5000; 
             display: none; flex-direction: column; 
@@ -82,7 +91,7 @@
         
         .video-wrapper { 
             width: 100%; 
-            height: 70vh; /* Massive on PC */
+            height: 70vh; /* PC height */
             background: #000; 
             position: relative;
             flex-shrink: 0;
@@ -90,7 +99,7 @@
 
         @media (max-width: 768px) {
             .video-wrapper { 
-                height: 42vh; /* Large on Mobile */
+                height: 42vh; /* Mobile height */
             }
         }
 
@@ -104,13 +113,13 @@
         }
         .video-wrapper.show-controls .controls-wrapper { opacity: 1; }
 
-        /* Cinematic Header */
+        /* Header Style */
         .p-header { padding: 25px; display: flex; align-items: center; gap: 15px; }
         .p-back-circle { width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .p-red-pipe { width: 4px; height: 30px; background: var(--primary); border-radius: 2px; }
         .p-name { font-weight: 800; font-size: 1.3rem; color: #fff; text-shadow: 0 2px 10px #000; }
 
-        /* Progress & Controls */
+        /* Bottom Area */
         .p-bottom { padding: 25px; width: 100%; }
         .progress-area { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 15px; cursor: pointer; }
         .progress-bar { height: 100%; background: var(--primary); width: 0%; border-radius: 10px; }
@@ -120,11 +129,12 @@
         .p-icon { cursor: pointer; }
         .timer { font-size: 0.9rem; font-weight: 600; }
 
+        /* Quality Dropdown */
         .quality-menu { position: absolute; bottom: 90px; right: 25px; background: #111; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: none; min-width: 150px; z-index: 30; }
         .q-item { padding: 12px 18px; font-size: 0.9rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .q-item.active { background: var(--primary); }
 
-        /* Scrollable Suggestions */
+        /* Suggestions */
         .player-content-scroll {
             flex-grow: 1;
             overflow-y: auto;
@@ -133,7 +143,7 @@
         }
         .suggestion-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        /* --- Modals & Nav --- */
+        /* --- Nav --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: var(--bg); backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-sec); cursor: pointer; font-size: 0.7rem; font-weight: 800; gap: 4px; }
         .nav-item.active { color: var(--primary); }
@@ -175,13 +185,11 @@
     <div id="channel-grid" class="grid">
         <div style="grid-column: 1/-1; text-align: center; padding: 100px;">
             <div class="spinner" style="margin: 0 auto;"></div>
-            <p style="margin-top: 20px; color: var(--text-sec); font-weight: 600;">EliteTV is Loading...</p>
         </div>
     </div>
 
-    <!-- RE-ENGINEERED PLAYER OVERLAY -->
+    <!-- PLAYER OVERLAY -->
     <div id="player-overlay">
-        <!-- Video stays locked at top -->
         <div class="video-wrapper" id="v-wrap">
             <div id="video-loader" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#000; z-index:15;"><div class="spinner"></div></div>
             <video id="video" playsinline></video>
@@ -215,7 +223,6 @@
             </div>
         </div>
 
-        <!-- Scrollable Suggestions Area -->
         <div class="player-content-scroll">
             <h2 class="suggestion-title" id="s-title"><i data-lucide="sparkles" color="var(--primary)"></i> Similar Channels</h2>
             <div id="suggestion-grid" class="grid" style="padding: 0;"></div>
@@ -228,7 +235,6 @@
         <div class="nav-item" onclick="toggleModal(true)"><i data-lucide="plus-circle"></i><span>IMPORT</span></div>
     </div>
 
-    <!-- Import Modal -->
     <div id="importModal">
         <div style="background:var(--surface); border:1px solid var(--border); width:100%; max-width:400px; padding:2.5rem; border-radius:32px; text-align:center;">
             <h2 style="font-weight: 800; margin-bottom: 20px;">Import M3U</h2>
@@ -348,8 +354,16 @@
 
         function setupQuality() {
             const menu = document.getElementById('quality-menu');
-            const sortedLevels = hls.levels.map((l, i) => ({...l, index: i})).sort((a, b) => b.height - a.height);
+            const uniqueHeights = new Set();
+            const sortedLevels = hls.levels
+                .map((l, i) => ({...l, index: i}))
+                .sort((a, b) => b.height - a.height);
+            
             menu.innerHTML = sortedLevels.map(l => {
+                // Filter duplicates
+                if (uniqueHeights.has(l.height)) return "";
+                uniqueHeights.add(l.height);
+
                 let label = l.height;
                 if(l.height >= 1080) label = "1080 FHD";
                 else if(l.height >= 720) label = "720 HD";
